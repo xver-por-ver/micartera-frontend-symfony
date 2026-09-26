@@ -1,18 +1,7 @@
-name: PHPUnit test & Static code analysis
+name: Application Quality Assurance
 
 on:
-  push:
-    branches: [ "main" ]
-    paths-ignore:
-      - '**.md'
-      - LICENSE
-      - 'translations/**'
-  pull_request:
-    branches: [ "main" ]
-    paths-ignore:
-      - '**.md'
-      - LICENSE
-      - 'translations/**'
+  workflow_call:
 
 env:
   XDEBUG_MODE: coverage
@@ -46,7 +35,7 @@ jobs:
           echo "release_opentelemetry=$release_opentelemetry" >> "$GITHUB_OUTPUT"
 
   build:
-    name: micartera-frontend-symfony
+    name: Install, Build, Test and Analyze
     needs: load-versions
 
     runs-on: ubuntu-latest
@@ -127,10 +116,3 @@ jobs:
        
     - name: Psalm static code analysis
       run: devbox run vendor/bin/psalm
-
-    - name: Build Docker image
-      run: |
-        set -a
-        . ./versions.env
-        set +a
-        docker build --build-arg RELEASE_PHP --build-arg RELEASE_NODE --build-arg RELEASE_OPENTELEMETRY .

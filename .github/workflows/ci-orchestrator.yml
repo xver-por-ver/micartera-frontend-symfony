@@ -1,0 +1,33 @@
+name: CI Orchestrator
+
+on:
+  push:
+    branches: [ "main" ]
+    paths-ignore:
+      - '**.md'
+      - LICENSE
+      - 'translations/**'
+  pull_request:
+    branches: [ "main" ]
+    paths-ignore:
+      - '**.md'
+      - LICENSE
+      - 'translations/**'
+
+permissions:
+  contents: read
+
+jobs:
+  symfony-recipes:
+    name: Symfony recipes check
+    uses: ./.github/workflows/symfony-recipe-check.yml
+
+  application-checks:
+    name: Application Quality Assurance
+    needs: symfony-recipes
+    uses: ./.github/workflows/application-quality-assurance.yml
+
+  docker-build:
+    name: Docker build
+    needs: application-checks
+    uses: ./.github/workflows/docker.yml

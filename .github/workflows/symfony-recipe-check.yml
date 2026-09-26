@@ -1,0 +1,30 @@
+name: Symfony recipes check
+
+on:
+  workflow_call:
+
+permissions:
+  contents: read
+
+jobs:
+  check-recipes:
+    name: Check Symfony recipes
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
+
+      - name: Setup devbox
+        uses: jetify-com/devbox-install-action@v0.15.0
+        with:
+          enable-cache: true
+
+      - name: Validate composer.json and composer.lock
+        run: devbox run composer validate --strict
+
+      - name: Install dependencies
+        run: devbox run composer install --prefer-dist --no-progress --no-interaction
+
+      - name: Check outdated Symfony recipes
+        run: devbox run composer recipes --outdated
