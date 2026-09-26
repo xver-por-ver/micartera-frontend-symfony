@@ -35,7 +35,7 @@ jobs:
           echo "release_opentelemetry=$release_opentelemetry" >> "$GITHUB_OUTPUT"
 
   build:
-    name: Application Quality Assurance
+    name: Install, Build, Test and Analyze
     needs: load-versions
 
     runs-on: ubuntu-latest
