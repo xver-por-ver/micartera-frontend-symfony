@@ -1,24 +1,13 @@
-name: PHPUnit test & Static code analysis
+name: Application Quality Assurance
 
 on:
-  push:
-    branches: [ "main" ]
-    paths-ignore:
-      - '**.md'
-      - LICENSE
-      - 'translations/**'
-  pull_request:
-    branches: [ "main" ]
-    paths-ignore:
-      - '**.md'
-      - LICENSE
-      - 'translations/**'
+  workflow_call:
 
 env:
   XDEBUG_MODE: coverage
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   load-versions:
@@ -46,7 +35,7 @@ jobs:
           echo "release_opentelemetry=$release_opentelemetry" >> "$GITHUB_OUTPUT"
 
   build:
-    name: micartera-frontend-symfony
+    name: Application Quality Assurance
     needs: load-versions
 
     runs-on: ubuntu-latest
@@ -81,8 +70,6 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v7
-      with:
-        ref: ${{ github.head_ref || github.ref_name }}
     
     - name: Setup devbox
       uses: jetify-com/devbox-install-action@v0.15.0
@@ -111,90 +98,6 @@ jobs:
     - name: Install dependencies
       run: devbox run composer install --prefer-dist --no-progress --optimize-autoloader
 
-    - name: Update outdated Symfony recipes
-      env:
-        BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
-        IS_FORK_PR: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name != github.repository }}
-      run: |
-        set -euo pipefail
-
-        set +e
-        recipes_output=$(devbox run composer recipes --outdated 2>&1)
-        recipes_status=$?
-        set -e
-
-        printf '%s\n' "$recipes_output"
-
-        if [ "$recipes_status" -eq 0 ]; then
-          exit 0
-        fi
-
-        packages=$(printf '%s\n' "$recipes_output" | awk '/^[[:space:]]*\* / && /\(update available\)/ { print $2 }')
-
-        if [ -z "$packages" ]; then
-          echo "No automatically updateable Symfony recipes found."
-          exit 0
-        fi
-
-        git config user.name "github-actions[bot]"
-        git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-        initial_head=$(git rev-parse HEAD)
-        update_failed=0
-
-        for package in $packages; do
-          echo "Updating Symfony recipe for $package"
-
-          set +e
-          devbox run composer recipes:update "$package" --no-interaction --no-changelog
-          update_status=$?
-          set -e
-
-          if [ "$update_status" -ne 0 ] || [ -n "$(git diff --name-only --diff-filter=U)" ]; then
-            echo "Recipe update for $package failed or produced conflicts. Resolve it manually."
-            git status --short
-            git reset --hard HEAD
-            git clean -fd
-            update_failed=1
-            continue
-          fi
-
-          git add -A
-
-          if git diff --cached --quiet; then
-            echo "Recipe update for $package produced no changes."
-            continue
-          fi
-
-          git commit -m "Update Symfony recipe for $package"
-        done
-
-        if [ "$(git rev-parse HEAD)" = "$initial_head" ]; then
-          echo "No recipe update commits were created."
-          if [ "$update_failed" -ne 0 ]; then
-            exit 1
-          fi
-          exit 0
-        fi
-
-        if [ "$IS_FORK_PR" = "true" ]; then
-          echo "Pull request is from a fork; recipe updates were created but cannot be pushed by this workflow."
-          exit 1
-        fi
-
-        git fetch origin "$BRANCH_NAME"
-
-        if git merge-base --is-ancestor "origin/$BRANCH_NAME" HEAD; then
-          git push origin "HEAD:$BRANCH_NAME"
-        else
-          echo "Remote branch moved; not pushing because it would not be a fast-forward."
-          exit 1
-        fi
-
-        if [ "$update_failed" -ne 0 ]; then
-          echo "One or more recipe updates failed or produced conflicts."
-          exit 1
-        fi
-
     - name: Run Database setup
       run: |
         devbox run bin/console doctrine:database:create --if-not-exists --env=test || echo "Schema creation failed"
@@ -213,10 +116,3 @@ jobs:
        
     - name: Psalm static code analysis
       run: devbox run vendor/bin/psalm
-
-    - name: Build Docker image
-      run: |
-        set -a
-        . ./versions.env
-        set +a
-        docker build --build-arg RELEASE_PHP --build-arg RELEASE_NODE --build-arg RELEASE_OPENTELEMETRY .
