@@ -8561,16 +8561,16 @@
         },
         {
             "name": "xver/micartera-domain",
-            "version": "1.0.12",
+            "version": "1.0.13",
             "source": {
                 "type": "git",
-                "url": "https://github.com/sgurdiel/micartera-domain.git",
-                "reference": "ebf1cdc6ebab77fba03ad07a425b7cc739c26922"
+                "url": "https://github.com/xver-por-ver/micartera-domain.git",
+                "reference": "aa5862ade7d49fcfbc546aa274a7e2022b08baa6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sgurdiel/micartera-domain/zipball/ebf1cdc6ebab77fba03ad07a425b7cc739c26922",
-                "reference": "ebf1cdc6ebab77fba03ad07a425b7cc739c26922",
+                "url": "https://api.github.com/repos/xver-por-ver/micartera-domain/zipball/aa5862ade7d49fcfbc546aa274a7e2022b08baa6",
+                "reference": "aa5862ade7d49fcfbc546aa274a7e2022b08baa6",
                 "shasum": ""
             },
             "require": {
@@ -8605,22 +8605,22 @@
             ],
             "description": "MiCartera Domain",
             "support": {
-                "issues": "https://github.com/sgurdiel/micartera-domain/issues",
-                "source": "https://github.com/sgurdiel/micartera-domain/tree/1.0.12"
+                "issues": "https://github.com/xver-por-ver/micartera-domain/issues",
+                "source": "https://github.com/xver-por-ver/micartera-domain/tree/1.0.13"
             },
-            "time": "2026-09-23T09:16:28+00:00"
+            "time": "2026-09-27T16:56:52+00:00"
         },
         {
             "name": "xver/php-app-core",
             "version": "1.0.10",
             "source": {
                 "type": "git",
-                "url": "https://github.com/sgurdiel/php-app-core.git",
+                "url": "https://github.com/xver-por-ver/php-app-core.git",
                 "reference": "2177df29417ea52632741b11852a06f4d30bc2bb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sgurdiel/php-app-core/zipball/2177df29417ea52632741b11852a06f4d30bc2bb",
+                "url": "https://api.github.com/repos/xver-por-ver/php-app-core/zipball/2177df29417ea52632741b11852a06f4d30bc2bb",
                 "reference": "2177df29417ea52632741b11852a06f4d30bc2bb",
                 "shasum": ""
             },
@@ -8658,12 +8658,12 @@
             "version": "1.0.8",
             "source": {
                 "type": "git",
-                "url": "https://github.com/sgurdiel/php-auth-core.git",
+                "url": "https://github.com/xver-por-ver/php-auth-core.git",
                 "reference": "854449edbe5c179a8c0e50ae5e0fa47f19fb7cd7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sgurdiel/php-auth-core/zipball/854449edbe5c179a8c0e50ae5e0fa47f19fb7cd7",
+                "url": "https://api.github.com/repos/xver-por-ver/php-auth-core/zipball/854449edbe5c179a8c0e50ae5e0fa47f19fb7cd7",
                 "reference": "854449edbe5c179a8c0e50ae5e0fa47f19fb7cd7",
                 "shasum": ""
             },
