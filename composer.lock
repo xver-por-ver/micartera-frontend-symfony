@@ -8652,16 +8652,16 @@
         },
         {
             "name": "xver/micartera-domain",
-            "version": "1.0.14",
+            "version": "1.0.15",
             "source": {
                 "type": "git",
                 "url": "https://github.com/xver-por-ver/micartera-domain.git",
-                "reference": "bae260608cc5e30b24ba001cb6ea7678ff866f4f"
+                "reference": "9ae319b8495e7eab56392c2027aed1b0a99d0586"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/xver-por-ver/micartera-domain/zipball/bae260608cc5e30b24ba001cb6ea7678ff866f4f",
-                "reference": "bae260608cc5e30b24ba001cb6ea7678ff866f4f",
+                "url": "https://api.github.com/repos/xver-por-ver/micartera-domain/zipball/9ae319b8495e7eab56392c2027aed1b0a99d0586",
+                "reference": "9ae319b8495e7eab56392c2027aed1b0a99d0586",
                 "shasum": ""
             },
             "require": {
@@ -8697,9 +8697,9 @@
             "description": "MiCartera Domain",
             "support": {
                 "issues": "https://github.com/xver-por-ver/micartera-domain/issues",
-                "source": "https://github.com/xver-por-ver/micartera-domain/tree/1.0.14"
+                "source": "https://github.com/xver-por-ver/micartera-domain/tree/1.0.15"
             },
-            "time": "2026-09-28T16:32:40+00:00"
+            "time": "2026-09-28T17:36:40+00:00"
         },
         {
             "name": "xver/php-app-core",
