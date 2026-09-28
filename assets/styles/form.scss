@@ -21,7 +21,9 @@ form {
         padding: 12px 20px;
         margin: 8px 0;
         display: inline-block;
-        border: 1px solid #ccc;
+        border: 1px solid var(--color-input-border, #ccc);
+        background-color: var(--color-background, #fff);
+        color: var(--color-text, #111827);
         border-radius: 4px;
         box-sizing: border-box;
     }
@@ -39,9 +41,9 @@ form {
         }
     }
     .alert-danger {
-        color: #c02623;
-        background-color: #f2dede;
-        border-color: #c02623 !important;
+        color: var(--color-error-text, #c02623);
+        background-color: var(--color-error-bg, #f2dede);
+        border-color: var(--color-error-text, #c02623) !important;
     }
     .alert {
         padding: 15px;
@@ -51,7 +53,7 @@ form {
         text-align: center;
     }
     ul.formError {
-        color: #e9100d;
+        color: var(--color-error-text, #e9100d);
         padding-left: 18px;
         li::marker {
             content: "！";
@@ -64,7 +66,7 @@ form.deleteForm {
     display: inline-block;
     button {
         background-color: transparent;
-        color: #ca2507;
+        color: var(--color-error-text, #ca2507);
         padding: 6px 6px;
         margin: 2px 0;
         cursor: pointer;
@@ -72,8 +74,8 @@ form.deleteForm {
         border: 1px solid transparent;
         border-radius: 4px;
         &:hover {
-            border-color: #ca2507;
-            background-color: #f8d7d1;
+            border-color: var(--color-error-text, #ca2507);
+            background-color: var(--color-error-bg, #f8d7d1);
         }
     }
 }

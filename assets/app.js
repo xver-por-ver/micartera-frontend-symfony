@@ -5,6 +5,19 @@
  * (and its CSS file) in your base layout (base.html.twig).
  */
 
+const storedTheme = localStorage.getItem('theme') || 'dark';
+document.documentElement.dataset.theme = storedTheme;
+
+const themeSelector = document.querySelector('#themeSelector');
+if (themeSelector != null) {
+    themeSelector.value = storedTheme;
+    themeSelector.addEventListener('change', (event) => {
+        const theme = event.target.value;
+        localStorage.setItem('theme', theme);
+        document.documentElement.dataset.theme = theme;
+    });
+}
+
 const navMenuOpen = document.querySelector(".navMenuOpen");
 const navMenuClose = document.querySelector(".navMenuClose");
 const navMenu = document.querySelector(".navMenu");

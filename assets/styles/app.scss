@@ -2,6 +2,81 @@
 @use 'fontawesome/fontawesome';
 @use 'fontawesome/solid';
 
+:root[data-theme='light'] {
+    color-scheme: light;
+    --color-background: #ffffff;
+    --color-text: #111827;
+    --color-heading: #903c99;
+    --color-link: #065bdb;
+    --color-link-hover-bg: #d2e0f7;
+    --color-muted: #595b5f;
+    --color-positive-bg: #e6f4ea;
+    --color-positive-text: #137333;
+    --color-negative-bg: #fce8e6;
+    --color-negative-text: #a50e0e;
+    --color-error-bg: #fdaeae;
+    --color-error-text: #d00000;
+    --color-success-bg: #c0fdae;
+    --color-success-text: #137333;
+    --color-menu-backdrop: #dcdcdc;
+    --color-menu-background: #d5e7f7;
+    --color-menu-link: #0a5397;
+    --color-table-border: #dddddd;
+    --color-table-header-bg: #f8f8f8;
+    --color-input-border: #cccccc;
+}
+
+:root,
+:root[data-theme='dark'] {
+    color-scheme: dark;
+    --color-background: #111827;
+    --color-text: #e5e7eb;
+    --color-heading: #d8b4fe;
+    --color-link: #93c5fd;
+    --color-link-hover-bg: #1e3a5f;
+    --color-muted: #9ca3af;
+    --color-positive-bg: #052e16;
+    --color-positive-text: #86efac;
+    --color-negative-bg: #450a0a;
+    --color-negative-text: #fca5a5;
+    --color-error-bg: #450a0a;
+    --color-error-text: #fca5a5;
+    --color-success-bg: #052e16;
+    --color-success-text: #86efac;
+    --color-menu-backdrop: #030712;
+    --color-menu-background: #1f2937;
+    --color-menu-link: #93c5fd;
+    --color-table-border: #374151;
+    --color-table-header-bg: #1f2937;
+    --color-input-border: #4b5563;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root[data-theme='os'] {
+        color-scheme: dark;
+        --color-background: #111827;
+        --color-text: #e5e7eb;
+        --color-heading: #d8b4fe;
+        --color-link: #93c5fd;
+        --color-link-hover-bg: #1e3a5f;
+        --color-muted: #9ca3af;
+        --color-positive-bg: #052e16;
+        --color-positive-text: #86efac;
+        --color-negative-bg: #450a0a;
+        --color-negative-text: #fca5a5;
+        --color-error-bg: #450a0a;
+        --color-error-text: #fca5a5;
+        --color-success-bg: #052e16;
+        --color-success-text: #86efac;
+        --color-menu-backdrop: #030712;
+        --color-menu-background: #1f2937;
+        --color-menu-link: #93c5fd;
+        --color-table-border: #374151;
+        --color-table-header-bg: #1f2937;
+        --color-input-border: #4b5563;
+    }
+}
+
 * {
     font-family: "Lucida Console", "Courier new", monospace;
     padding: 0;
@@ -11,6 +86,8 @@
 html, body {
     height: 100%;
     width: 100%;
+    background-color: var(--color-background);
+    color: var(--color-text);
 }
 
 div.pageContainer {
@@ -27,24 +104,43 @@ div.pageContainer {
         margin-right: auto;
         font-size: 0.8em;
         padding: 4px 0;
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        flex-wrap: wrap;
+        justify-content: center;
     }
 }
 
+.themeSelector {
+    select {
+        background-color: var(--color-background);
+        color: var(--color-text);
+        border: 1px solid var(--color-muted);
+        border-radius: 4px;
+        padding: 2px 4px;
+    }
+}
+
+a {
+    color: var(--color-link);
+}
+
 h1 {
-    color: #903c99;
+    color: var(--color-heading);
     text-align: center;
     font-weight: 500;
 }
 
 h2 {
-    color: #903c99;
+    color: var(--color-heading);
     padding: 16px 0;
     text-align: center;
     font-weight: 500;
 }
 
 .actionItem {
-    color: #065bdb;
+    color: var(--color-link);
     padding: 6px 6px;
     margin: 2px 0;
     cursor: pointer;
@@ -53,13 +149,13 @@ h2 {
     border: 1px solid transparent;
     border-radius: 4px;
     &:hover {
-        background-color: #d2e0f7;
-        border-color: #065bdb;
+        background-color: var(--color-link-hover-bg);
+        border-color: var(--color-link);
     }
 }
 
 .disabledItem {
-    color: #595b5f;
+    color: var(--color-muted);
     padding: 6px 6px;
     margin: 2px 0;
     display: inline-block;
@@ -69,42 +165,42 @@ h2 {
 }
 
 .flash-error {
-    background-color: #fdaeae;
+    background-color: var(--color-error-bg);
     margin-left: 40px;
-    color: red;
+    color: var(--color-error-text);
     text-align: center;
     border-radius: 11px;
-    border: 1px solid red;
+    border: 1px solid var(--color-error-text);
     font-weight: bold;
     padding: 4px;
 }
 
 .flash-success {
-    background-color: #c0fdae;
+    background-color: var(--color-success-bg);
     margin-left: 40px;
-    color: green;
+    color: var(--color-success-text);
     text-align: center;
     border-radius: 11px;
-    border: 1px solid green;
+    border: 1px solid var(--color-success-text);
     font-weight: bold;
     padding: 4px;
 }
 
 .positiveValue {
-    background-color: #e6f4ea;
-    color: #137333;
+    background-color: var(--color-positive-bg);
+    color: var(--color-positive-text);
 }
 .negativeValue {
-    background-color: #fce8e6;
-    color: #a50e0e;
+    background-color: var(--color-negative-bg);
+    color: var(--color-negative-text);
 }
 .positivePercent {
-    background-color: #e6f4ea;
-    color: #137333;
+    background-color: var(--color-positive-bg);
+    color: var(--color-positive-text);
 }
 .negativePercent {
-    background-color: #fce8e6;
-    color: #a50e0e;
+    background-color: var(--color-negative-bg);
+    color: var(--color-negative-text);
 }
 .positivePercent svg, .negativePercent svg {
     fill: currentColor;
