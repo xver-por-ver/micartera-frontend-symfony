@@ -35,7 +35,15 @@
             {% block body %}{% endblock %}
         </div>
         <div class="footer">
-        ({{ APP_RELEASE }}) {{ 'poweredBy' | trans }} © <a href="https://www.xver.net" target="_blank">xVer</a>
+            <label class="themeSelector">
+                Theme
+                <select id="themeSelector" aria-label="Theme">
+                    <option value="dark">Dark</option>
+                    <option value="light">Light</option>
+                    <option value="os">OS</option>
+                </select>
+            </label>
+            <span>({{ APP_RELEASE }}) {{ 'poweredBy' | trans }} © <a href="https://www.xver.net" target="_blank">xVer</a></span>
         </div>
     </div>
 </body>
