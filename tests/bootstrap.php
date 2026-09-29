@@ -21,7 +21,9 @@ $kernel->boot();
 
 // Prepare test database for testing
 $testsuite = getopt('', ['testsuite:']);
-if (is_array($testsuite) && isset($testsuite['testsuite'])) {
+if (!is_array($testsuite) || !isset($testsuite['testsuite'])) {
+    require dirname(__DIR__).'/tests/TestDbSetup.php';
+} else {
     $testsuites = explode(',', $testsuite['testsuite']);
     if (
         in_array('integration', $testsuites)

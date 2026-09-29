@@ -17,7 +17,9 @@ use Xver\MiCartera\Domain\Stock\Domain\Transaction\Acquisition;
 use Xver\MiCartera\Domain\Stock\Domain\Transaction\TransactionAmountVO;
 use Xver\MiCartera\Domain\Stock\Domain\Transaction\TransactionExpenseVO;
 use Xver\MiCartera\Domain\Stock\Infrastructure\Doctrine\StockPersistence;
-use Xver\MiCartera\Domain\Stock\Infrastructure\Doctrine\Transaction\TransactionPersistence;
+use Xver\MiCartera\Domain\Stock\Infrastructure\Doctrine\Transaction\Accounting\MovementPersistence;
+use Xver\MiCartera\Domain\Stock\Infrastructure\Doctrine\Transaction\AcquisitionPersistence;
+use Xver\MiCartera\Domain\Stock\Infrastructure\Doctrine\Transaction\LiquidationPersistence;
 
 class BaseDataFixtures extends Fixture
 {
@@ -55,9 +57,13 @@ class BaseDataFixtures extends Fixture
         $price3 = new StockPriceVO('5.9620', $currencyEuro);
         new Stock($stockPersistence, 'ROVI', 'Laboratorios Rovi', $price3, $exchange);
         $expenses = new TransactionExpenseVO('10.23', $currencyEuro);
-        $transactionPersistence = new TransactionPersistence($this->registry);
+        $acquisitionPersistence = new AcquisitionPersistence($this->registry);
+        $liquidationPersistence = new LiquidationPersistence($this->registry);
+        $movementPersistence = new MovementPersistence($this->registry);
         new Acquisition(
-            $transactionPersistence,
+            $acquisitionPersistence,
+            $liquidationPersistence,
+            $movementPersistence,
             $stock,
             $price,
             new \DateTime('last week', new \DateTimeZone('UTC')),
