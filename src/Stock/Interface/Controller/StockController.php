@@ -19,7 +19,7 @@ use Xver\MiCartera\Domain\Stock\Application\Command\StockUpdateCommand;
 use Xver\MiCartera\Domain\Stock\Application\Query\Portfolio\PortfolioQuery;
 use Xver\MiCartera\Domain\Stock\Application\Query\StockQuery;
 use Xver\MiCartera\Domain\Stock\Domain\StockPersistenceInterface;
-use Xver\MiCartera\Domain\Stock\Domain\Transaction\TransactionPersistenceInterface;
+use Xver\MiCartera\Domain\Stock\Domain\Transaction\AcquisitionPersistenceInterface;
 use Xver\MiCartera\Frontend\Symfony\Stock\Interface\Form\StockType;
 
 #[Route('/{_locale<%app.locales%>}/stock', name: 'stock_')]
@@ -100,7 +100,7 @@ final class StockController extends AbstractController
         DomainExceptionTranslator $exceptionTranslator,
         AccountPersistenceInterface $accountPersistence,
         StockPersistenceInterface $stockPersistence,
-        TransactionPersistenceInterface $transactionPersistence
+        AcquisitionPersistenceInterface $acquisitionPersistence
     ): RedirectResponse|Response {
         $request->isMethod('GET')
             ? $formData = [
@@ -133,7 +133,7 @@ final class StockController extends AbstractController
 
         /** @psalm-suppress PossiblyNullReference */
         $userIdentifier = $this->getUser()->getUserIdentifier();
-        $query = new PortfolioQuery($stockPersistence, $accountPersistence, $transactionPersistence);
+        $query = new PortfolioQuery($stockPersistence, $accountPersistence, $acquisitionPersistence);
         $summaryVO = $query->getStockPortfolioSummary(
             $userIdentifier,
             (string) $formData['code']

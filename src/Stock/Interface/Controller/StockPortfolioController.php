@@ -9,7 +9,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Xver\MiCartera\Domain\Account\Domain\AccountPersistenceInterface;
 use Xver\MiCartera\Domain\Stock\Application\Query\Portfolio\PortfolioQuery;
 use Xver\MiCartera\Domain\Stock\Domain\StockPersistenceInterface;
-use Xver\MiCartera\Domain\Stock\Domain\Transaction\TransactionPersistenceInterface;
+use Xver\MiCartera\Domain\Stock\Domain\Transaction\AcquisitionPersistenceInterface;
 
 #[Route('/{_locale<%app.locales%>}/stockportfolio')]
 final class StockPortfolioController extends AbstractController
@@ -19,11 +19,11 @@ final class StockPortfolioController extends AbstractController
         Request $request,
         AccountPersistenceInterface $accountPersistence,
         StockPersistenceInterface $stockPersistence,
-        TransactionPersistenceInterface $transactionPersistence
+        AcquisitionPersistenceInterface $acquisitionPersistence
     ): Response {
         /** @psalm-suppress PossiblyNullReference */
         $userIdentifier = $this->getUser()->getUserIdentifier();
-        $query = new PortfolioQuery($stockPersistence, $accountPersistence, $transactionPersistence);
+        $query = new PortfolioQuery($stockPersistence, $accountPersistence, $acquisitionPersistence);
         $portfolioDTO = $query->getPortfolio(
             $userIdentifier,
             10,

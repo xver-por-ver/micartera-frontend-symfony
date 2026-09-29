@@ -12,13 +12,15 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 use Xver\PhpAppCoreBundle\Exception\Domain\DomainExceptionTranslator;
 use Xver\PhpAppCoreBundle\Exception\Domain\DomainViolationException;
 use Xver\MiCartera\Domain\Account\Domain\AccountPersistenceInterface;
-use Xver\MiCartera\Domain\Stock\Application\Command\Transaction\StockCreatePurchaseCommand;
-use Xver\MiCartera\Domain\Stock\Application\Command\Transaction\StockCreateSellCommand;
-use Xver\MiCartera\Domain\Stock\Application\Command\Transaction\StockDeletePurchaseCommand;
-use Xver\MiCartera\Domain\Stock\Application\Command\Transaction\StockDeleteSellCommand;
+use Xver\MiCartera\Domain\Stock\Application\Command\Transaction\AcquisitionCreateCommand;
+use Xver\MiCartera\Domain\Stock\Application\Command\Transaction\AcquisitionDeleteCommand;
+use Xver\MiCartera\Domain\Stock\Application\Command\Transaction\LiquidationCreateCommand;
+use Xver\MiCartera\Domain\Stock\Application\Command\Transaction\LiquidationDeleteCommand;
 use Xver\MiCartera\Domain\Stock\Application\Command\Transaction\StockOperationImportCommand;
 use Xver\MiCartera\Domain\Stock\Domain\StockPersistenceInterface;
-use Xver\MiCartera\Domain\Stock\Domain\Transaction\TransactionPersistenceInterface;
+use Xver\MiCartera\Domain\Stock\Domain\Transaction\Accounting\MovementPersistenceInterface;
+use Xver\MiCartera\Domain\Stock\Domain\Transaction\AcquisitionPersistenceInterface;
+use Xver\MiCartera\Domain\Stock\Domain\Transaction\LiquidationPersistenceInterface;
 use Xver\MiCartera\Frontend\Symfony\Stock\Interface\Form\StockOperateImportType;
 use Xver\MiCartera\Frontend\Symfony\Stock\Interface\Form\StockOperateType;
 
@@ -32,7 +34,9 @@ final class StockOperateController extends AbstractController
         DomainExceptionTranslator $exceptionTranslator,
         AccountPersistenceInterface $accountPersistence,
         StockPersistenceInterface $stockPersistence,
-        TransactionPersistenceInterface $transactionPersistence
+        AcquisitionPersistenceInterface $acquisitionPersistence,
+        LiquidationPersistenceInterface $liquidationPersistence,
+        MovementPersistenceInterface $movementPersistence
     ): Response {
         $formData = [
             'type' => match ((string) $request->attributes->get('type')) {
@@ -64,8 +68,8 @@ final class StockOperateController extends AbstractController
                 $amount = $form->get('amount')->getData();
                 $command =
                     0 === $formData['type']
-                    ? new StockCreatePurchaseCommand($transactionPersistence, $accountPersistence, $stockPersistence)
-                    : new StockCreateSellCommand($transactionPersistence, $accountPersistence, $stockPersistence)
+                    ? new AcquisitionCreateCommand($acquisitionPersistence, $liquidationPersistence, $movementPersistence, $accountPersistence, $stockPersistence)
+                    : new LiquidationCreateCommand($liquidationPersistence, $acquisitionPersistence, $movementPersistence, $accountPersistence, $stockPersistence)
                 ;
                 $command->invoke(
                     (string) $request->attributes->get('stock'),
@@ -97,7 +101,9 @@ final class StockOperateController extends AbstractController
         Request $request,
         TranslatorInterface $translator,
         DomainExceptionTranslator $exceptionTranslator,
-        TransactionPersistenceInterface $transactionPersistence
+        AcquisitionPersistenceInterface $acquisitionPersistence,
+        LiquidationPersistenceInterface $liquidationPersistence,
+        MovementPersistenceInterface $movementPersistence
     ): Response {
         $type = match ((string) $request->attributes->get('type')) {
             'purchase' => 0,
@@ -112,8 +118,8 @@ final class StockOperateController extends AbstractController
         } else {
             try {
                 $command = 0 === $type
-                ? new StockDeletePurchaseCommand($transactionPersistence)
-                : new StockDeleteSellCommand($transactionPersistence);
+                ? new AcquisitionDeleteCommand($acquisitionPersistence)
+                : new LiquidationDeleteCommand($liquidationPersistence, $acquisitionPersistence, $movementPersistence);
                 $command->invoke($id);
                 $this->addFlash('success', $translator->trans('actionCompletedSuccessfully'));
 
@@ -136,7 +142,9 @@ final class StockOperateController extends AbstractController
         DomainExceptionTranslator $exceptionTranslator,
         AccountPersistenceInterface $accountPersistence,
         StockPersistenceInterface $stockPersistence,
-        TransactionPersistenceInterface $transactionPersistence
+        AcquisitionPersistenceInterface $acquisitionPersistence,
+        LiquidationPersistenceInterface $liquidationPersistence,
+        MovementPersistenceInterface $movementPersistence
     ): Response {
         $form = $this->createForm(StockOperateImportType::class);
         $form->handleRequest($request);
@@ -162,7 +170,7 @@ final class StockOperateController extends AbstractController
                 
                 /** @psalm-suppress PossiblyNullReference */
                 $userIdentifier = $this->getUser()->getUserIdentifier();
-                $command = new StockOperationImportCommand($transactionPersistence, $accountPersistence, $stockPersistence);
+                $command = new StockOperationImportCommand($acquisitionPersistence, $liquidationPersistence, $movementPersistence, $accountPersistence, $stockPersistence);
                 $lineNumber = 1;
                 while (is_array($line = fgetcsv($fp,null,',','"','\\'))) {
                     $numCols = count($line);
