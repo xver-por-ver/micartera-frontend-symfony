@@ -112,7 +112,7 @@ jobs:
       run: npm run build
 
     - name: Run all test suites
-      run: devbox run vendor/bin/phpunit --testsuite=all --coverage-text
+      run: devbox run vendor/bin/phpunit --coverage-text
        
     - name: Psalm static code analysis
       run: devbox run vendor/bin/psalm
