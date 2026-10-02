@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/12.1/phpunit.xsd"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/13.4/phpunit.xsd"
          bootstrap="tests/bootstrap.php"
          colors="true"
          cacheDirectory=".phpunit.cache"
-         executionOrder="depends,defects"
+         executionOrder="defects"
          beStrictAboutCoverageMetadata="true"
          beStrictAboutOutputDuringTests="true"
          displayDetailsOnIncompleteTests="true"
@@ -17,38 +17,33 @@
          failOnRisky="true"
          failOnWarning="true"
          requireCoverageMetadata="true"
+         resolveDependencies="true"
 >
-    <php>
-        <server name="APP_ENV" value="test" force="true" />
-        <server name="KERNEL_CLASS" value="Xver\MiCartera\Frontend\Symfony\Kernel" force="true"/>
-        <server name="SHELL_VERBOSITY" value="-1" />
-
-        <!-- ###+ symfony/routing ### -->
-        <!-- Configure how to generate URLs in non-HTTP contexts, such as CLI commands. -->
-        <!-- See https://symfony.com/doc/current/routing.html#generating-urls-in-commands -->
-        <env name="DEFAULT_URI" value="http://localhost"/>
-        <!-- ###- symfony/routing ### -->
-
-        <!-- ###+ symfony/framework-bundle ### -->
-        <env name="APP_ENV" value="test"/>
-        <env name="APP_SECRET" value=""/>
-        <env name="APP_SHARE_DIR" value="var/share"/>
-        <!-- ###- symfony/framework-bundle ### -->
-    </php>
-    <testsuites>
-        <testsuite name="application">
-            <directory>tests/application</directory>
-        </testsuite>
-        <testsuite name="all">
-            <directory>tests/application</directory>
-        </testsuite>
-    </testsuites>
-    <source restrictNotices="true" restrictWarnings="true" ignoreIndirectDeprecations="true">
-        <include>
-            <directory suffix=".php">src</directory>
-        </include>
-        <exclude>
-            <file>src/Kernel.php</file>
-        </exclude>
-    </source>
+  <php>
+    <server name="APP_ENV" value="test" force="true"/>
+    <server name="SHELL_VERBOSITY" value="-1"/>
+    <!-- ###+ symfony/routing ### -->
+    <!-- Configure how to generate URLs in non-HTTP contexts, such as CLI commands. -->
+    <!-- See https://symfony.com/doc/current/routing.html#generating-urls-in-commands -->
+    <env name="DEFAULT_URI" value="http://localhost"/>
+    <!-- ###- symfony/routing ### -->
+    <!-- ###+ symfony/framework-bundle ### -->
+    <env name="APP_ENV" value="test"/>
+    <env name="APP_SECRET" value=""/>
+    <env name="APP_SHARE_DIR" value="var/share"/>
+    <!-- ###- symfony/framework-bundle ### -->
+  </php>
+  <testsuites>
+    <testsuite name="application">
+      <directory>tests/application</directory>
+    </testsuite>
+  </testsuites>
+  <source restrictNotices="true" restrictWarnings="true" ignoreIndirectDeprecations="true">
+    <include>
+      <directory suffix=".php">src</directory>
+    </include>
+    <exclude>
+      <file>src/Kernel.php</file>
+    </exclude>
+  </source>
 </phpunit>
