@@ -1,15 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 use Symfony\Component\Dotenv\Dotenv;
 use Xver\MiCartera\Frontend\Symfony\Kernel;
 
-require dirname(__DIR__).'/vendor/autoload.php';
+require dirname(__DIR__) . '/vendor/autoload.php';
 
 $dotenv = new Dotenv();
-$dotenv->load(dirname(__DIR__).'/versions.env');
+$dotenv->load(dirname(__DIR__) . '/versions.env');
 
 if (method_exists(Dotenv::class, 'bootEnv')) {
-    $dotenv->bootEnv(dirname(__DIR__).'/.env');
+    $dotenv->bootEnv(dirname(__DIR__) . '/.env');
 }
 
 if ($_SERVER['APP_DEBUG']) {
@@ -22,7 +24,7 @@ $kernel->boot();
 // Prepare test database for testing
 $testsuite = getopt('', ['testsuite:']);
 if (!is_array($testsuite) || !isset($testsuite['testsuite'])) {
-    require dirname(__DIR__).'/tests/TestDbSetup.php';
+    require dirname(__DIR__) . '/tests/TestDbSetup.php';
 } else {
     $testsuites = explode(',', $testsuite['testsuite']);
     if (
@@ -30,6 +32,6 @@ if (!is_array($testsuite) || !isset($testsuite['testsuite'])) {
         || in_array('application', $testsuites)
         || in_array('all', $testsuites)
     ) {
-        require dirname(__DIR__).'/tests/TestDbSetup.php';
+        require dirname(__DIR__) . '/tests/TestDbSetup.php';
     }
 }

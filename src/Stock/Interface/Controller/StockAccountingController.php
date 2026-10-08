@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Xver\MiCartera\Frontend\Symfony\Stock\Interface\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;

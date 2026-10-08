@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Xver\MiCartera\Frontend\Symfony\Stock\Interface\Form;
 
 use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
@@ -72,7 +74,7 @@ final class StockOperateType extends AbstractType implements DataMapperInterface
                 'scale' => $account->getCurrency()->getDecimals(),
                 'rounding_mode' => \NumberFormatter::ROUND_HALFUP,
                 'html5' => true,
-                'attr' => ['step' => '1e-'.$account->getCurrency()->getDecimals()],
+                'attr' => ['step' => '1e-' . $account->getCurrency()->getDecimals()],
                 'label' => new TranslatableMessage(
                     'expensesWithCurrencySymbol',
                     ['symbol' => $account->getCurrency()->getSymbol()]

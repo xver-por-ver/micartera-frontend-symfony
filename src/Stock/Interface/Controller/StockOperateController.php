@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Xver\MiCartera\Frontend\Symfony\Stock\Interface\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -21,6 +23,7 @@ use Xver\MiCartera\Domain\Stock\Domain\StockPersistenceInterface;
 use Xver\MiCartera\Domain\Stock\Domain\Transaction\Accounting\MovementPersistenceInterface;
 use Xver\MiCartera\Domain\Stock\Domain\Transaction\AcquisitionPersistenceInterface;
 use Xver\MiCartera\Domain\Stock\Domain\Transaction\LiquidationPersistenceInterface;
+use Xver\MiCartera\Frontend\Symfony\Stock\Interface\Form\NumericStringData;
 use Xver\MiCartera\Frontend\Symfony\Stock\Interface\Form\StockOperateImportType;
 use Xver\MiCartera\Frontend\Symfony\Stock\Interface\Form\StockOperateType;
 
@@ -36,7 +39,8 @@ final class StockOperateController extends AbstractController
         StockPersistenceInterface $stockPersistence,
         AcquisitionPersistenceInterface $acquisitionPersistence,
         LiquidationPersistenceInterface $liquidationPersistence,
-        MovementPersistenceInterface $movementPersistence
+        MovementPersistenceInterface $movementPersistence,
+        NumericStringData $numericStringData
     ): Response {
         $formData = [
             'type' => match ((string) $request->attributes->get('type')) {
@@ -52,31 +56,25 @@ final class StockOperateController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             try {
-                /** @psalm-var numeric-string */
-                $price = $form->get('price')->getData();
-
-                /** @psalm-var numeric-string */
-                $expenses = $form->get('expenses')->getData();
-
                 /** @psalm-var \DateTime */
                 $dateTime = $form->get('datetime')->getData();
 
                 /** @psalm-suppress PossiblyNullReference */
                 $userIdentifier = $this->getUser()->getUserIdentifier();
 
-                /** @psalm-var numeric-string */
-                $amount = $form->get('amount')->getData();
-                $command =
-                    0 === $formData['type']
+                $command
+                    = (
+                        0 === $formData['type']
                     ? new AcquisitionCreateCommand($acquisitionPersistence, $liquidationPersistence, $movementPersistence, $accountPersistence, $stockPersistence)
                     : new LiquidationCreateCommand($liquidationPersistence, $acquisitionPersistence, $movementPersistence, $accountPersistence, $stockPersistence)
+                    )
                 ;
                 $command->invoke(
                     (string) $request->attributes->get('stock'),
                     $dateTime,
-                    $amount,
-                    $price,
-                    $expenses,
+                    $numericStringData->from($form, 'amount'),
+                    $numericStringData->from($form, 'price'),
+                    $numericStringData->from($form, 'expenses'),
                     $userIdentifier
                 );
                 $this->addFlash('success', $translator->trans('actionCompletedSuccessfully'));
@@ -113,7 +111,7 @@ final class StockOperateController extends AbstractController
         /** @psalm-var string */
         $id = $request->request->get('id');
         $route = 0 === $type ? 'stockportfolio_index' : 'stockaccounting_index';
-        if (false === $this->isCsrfTokenValid('delete'.$id, (string) $request->request->get('_token'))) {
+        if (false === $this->isCsrfTokenValid('delete' . $id, (string) $request->request->get('_token'))) {
             $this->addFlash('error', $translator->trans('invalidFormToken'));
         } else {
             try {
@@ -167,12 +165,12 @@ final class StockOperateController extends AbstractController
                         )
                     );
                 }
-                
+
                 /** @psalm-suppress PossiblyNullReference */
                 $userIdentifier = $this->getUser()->getUserIdentifier();
                 $command = new StockOperationImportCommand($acquisitionPersistence, $liquidationPersistence, $movementPersistence, $accountPersistence, $stockPersistence);
                 $lineNumber = 1;
-                while (is_array($line = fgetcsv($fp,null,',','"','\\'))) {
+                while (is_array($line = fgetcsv($fp, null, ',', '"', '\\'))) {
                     $numCols = count($line);
                     if (6 != $numCols) {
                         throw new DomainViolationException(

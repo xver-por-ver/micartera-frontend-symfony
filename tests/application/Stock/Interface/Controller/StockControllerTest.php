@@ -6,10 +6,12 @@ namespace Tests\application\Stock\Interface\Controller;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Depends;
+use PHPUnit\Framework\Attributes\UsesClass;
 use Symfony\Component\HttpFoundation\Response;
 use Tests\application\ApplicationTestCase;
 use Xver\MiCartera\Domain\Stock\Domain\StockPriceVO;
 use Xver\MiCartera\Frontend\Symfony\Stock\Interface\Controller\StockController;
+use Xver\MiCartera\Frontend\Symfony\Stock\Interface\Form\NumericStringData;
 use Xver\MiCartera\Frontend\Symfony\Stock\Interface\Form\StockType;
 
 /**
@@ -17,6 +19,7 @@ use Xver\MiCartera\Frontend\Symfony\Stock\Interface\Form\StockType;
  */
 #[CoversClass(StockController::class)]
 #[CoversClass(StockType::class)]
+#[UsesClass(NumericStringData::class)]
 class StockControllerTest extends ApplicationTestCase
 {
     public function testNewStock(): void
@@ -33,10 +36,10 @@ class StockControllerTest extends ApplicationTestCase
 
         // set values on a form object
         $formFields = [
-            $formName.'[code]' => 'ABCD',
-            $formName.'[name]' => 'ABCD Name',
-            $formName.'[price]' => '6.5467',
-            $formName.'[exchange]' => 'MCE',
+            $formName . '[code]' => 'ABCD',
+            $formName . '[name]' => 'ABCD Name',
+            $formName . '[price]' => '6.5467',
+            $formName . '[exchange]' => 'MCE',
         ];
 
         // test new
@@ -67,9 +70,9 @@ class StockControllerTest extends ApplicationTestCase
 
         // set values on a form object
         $formFields = [
-            $formName.'[name]' => 'ABCD New Name',
-            $formName.'[price]' => '6.5467',
-            $formName.'[refererPage]' => '/en_GB/stock?page=1',
+            $formName . '[name]' => 'ABCD New Name',
+            $formName . '[price]' => '6.5467',
+            $formName . '[refererPage]' => '/en_GB/stock?page=1',
         ];
 
         // submit the Form object
@@ -79,14 +82,14 @@ class StockControllerTest extends ApplicationTestCase
         $this->assertSelectorTextContains('.flash-success', self::$translator->trans('actionCompletedSuccessfully'));
 
         // submit when no referer
-        $formFields[$formName.'[refererPage]'] = '';
+        $formFields[$formName . '[refererPage]'] = '';
         $this->client->submit($form, $formFields);
         $this->assertResponseRedirects('/en_GB/stock', Response::HTTP_SEE_OTHER);
         $crawler = $this->client->followRedirect();
         $this->assertSelectorTextContains('.flash-success', self::$translator->trans('actionCompletedSuccessfully'));
 
         // test domain exception
-        $formFields[$formName.'[price]'] = '999999999';
+        $formFields[$formName . '[price]'] = '999999999';
         $this->client->submit($form, $formFields);
         $this->assertRouteSame('stock_update');
         $this->assertResponseIsSuccessful();

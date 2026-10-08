@@ -15,6 +15,7 @@ use Xver\MiCartera\Frontend\Symfony\Stock\Interface\Controller\StockAccountingCo
 use Xver\MiCartera\Frontend\Symfony\Stock\Interface\Controller\StockController;
 use Xver\MiCartera\Frontend\Symfony\Stock\Interface\Controller\StockOperateController;
 use Xver\MiCartera\Frontend\Symfony\Stock\Interface\Controller\StockPortfolioController;
+use Xver\MiCartera\Frontend\Symfony\Stock\Interface\Form\NumericStringData;
 use Xver\MiCartera\Frontend\Symfony\Stock\Interface\Form\StockOperateImportType;
 use Xver\MiCartera\Frontend\Symfony\Stock\Interface\Form\StockOperateType;
 
@@ -24,6 +25,7 @@ use Xver\MiCartera\Frontend\Symfony\Stock\Interface\Form\StockOperateType;
 #[CoversClass(StockOperateController::class)]
 #[CoversClass(StockOperateType::class)]
 #[CoversClass(StockOperateImportType::class)]
+#[UsesClass(NumericStringData::class)]
 #[UsesClass(StockAccountingController::class)]
 #[UsesClass(StockController::class)]
 #[UsesClass(StockPortfolioController::class)]
@@ -46,11 +48,11 @@ class StockOperateControllerTest extends ApplicationTestCase
 
         // Test add acquisition and liquidation
         $fp = fopen($filePath, 'w+');
-        $fileContent = ''.PHP_EOL.''.PHP_EOL;
+        $fileContent = '' . PHP_EOL . '' . PHP_EOL;
         fputs($fp, $fileContent);
         $file = new UploadedFile($filePath, 'micartera.csv', null, \UPLOAD_ERR_PARTIAL, true);
         $formFields = [
-            $formName.'[csv]' => $file,
+            $formName . '[csv]' => $file,
         ];
         $this->client->submit($form, $formFields);
         $this->assertSelectorTextContains('.flash-error', self::$translator->trans('csvInvalidColumnCount', ['row' => 1, 'expected' => 6, 'got' => 1]));
@@ -73,14 +75,14 @@ class StockOperateControllerTest extends ApplicationTestCase
 
         // Test add acquisition and liquidation
         $fp = fopen($filePath, 'w+');
-        $dateAcquisition = (new \DateTime('30 mins ago', new \DateTimeZone('UTC')))->format('Y-m-d H:i:s');
-        $dateLiquidation = (new \DateTime('20 mins ago', new \DateTimeZone('UTC')))->format('Y-m-d H:i:s');
-        $fileContent = $dateAcquisition.',acquisition,SAN,1,2,3'.PHP_EOL;
-        $fileContent .= $dateLiquidation.',liquidation,SAN,1,2,3';
+        $dateAcquisition = new \DateTime('30 mins ago', new \DateTimeZone('UTC'))->format('Y-m-d H:i:s');
+        $dateLiquidation = new \DateTime('20 mins ago', new \DateTimeZone('UTC'))->format('Y-m-d H:i:s');
+        $fileContent = $dateAcquisition . ',acquisition,SAN,1,2,3' . PHP_EOL;
+        $fileContent .= $dateLiquidation . ',liquidation,SAN,1,2,3';
         fputs($fp, $fileContent);
         $file = new UploadedFile($filePath, 'micartera.csv', null, \UPLOAD_ERR_PARTIAL, true);
         $formFields = [
-            $formName.'[csv]' => $file,
+            $formName . '[csv]' => $file,
         ];
         fclose($fp);
         $this->client->submit($form, $formFields);
@@ -91,31 +93,31 @@ class StockOperateControllerTest extends ApplicationTestCase
         // Test file upload error
         $file = new UploadedFile('/tmp/nonexistent.csv', 'micartera.csv', null, \UPLOAD_ERR_PARTIAL, true);
         $formFields = [
-            $formName.'[csv]' => $file,
+            $formName . '[csv]' => $file,
         ];
         $this->client->submit($form, $formFields);
         $this->assertSelectorTextContains('.flash-error', self::$translator->trans('invalidUploadedFile'));
 
         // Test invalid column count exception
         $fp = fopen($filePath, 'w+');
-        $dateLiquidation = (new \DateTime('20 mins ago', new \DateTimeZone('UTC')))->format('Y-m-d H:i:s');
-        $fileContent = $dateLiquidation.',liquidation,SAN,1,2';
+        $dateLiquidation = new \DateTime('20 mins ago', new \DateTimeZone('UTC'))->format('Y-m-d H:i:s');
+        $fileContent = $dateLiquidation . ',liquidation,SAN,1,2';
         fputs($fp, $fileContent);
         $file = new UploadedFile($filePath, 'micartera.csv', null, \UPLOAD_ERR_PARTIAL, true);
         $formFields = [
-            $formName.'[csv]' => $file,
+            $formName . '[csv]' => $file,
         ];
         $this->client->submit($form, $formFields);
         $this->assertSelectorTextContains('.flash-error', self::$translator->trans('csvInvalidColumnCount', ['row' => 1, 'expected' => 6, 'got' => 5]));
 
         // Test domain exception
         $fp = fopen($filePath, 'w+');
-        $dateLiquidation = (new \DateTime('20 mins ago', new \DateTimeZone('UTC')))->format('Y-m-d H:i:s');
-        $fileContent = $dateLiquidation.',liquidation,NONEXISTENTSTOCK,1,2,3';
+        $dateLiquidation = new \DateTime('20 mins ago', new \DateTimeZone('UTC'))->format('Y-m-d H:i:s');
+        $fileContent = $dateLiquidation . ',liquidation,NONEXISTENTSTOCK,1,2,3';
         fputs($fp, $fileContent);
         $file = new UploadedFile($filePath, 'micartera.csv', null, \UPLOAD_ERR_PARTIAL, true);
         $formFields = [
-            $formName.'[csv]' => $file,
+            $formName . '[csv]' => $file,
         ];
         $this->client->submit($form, $formFields);
         $errorMsg = self::$translator->trans('', ['row' => 1, 'field' => 'stock', 'error' => self::$translator->trans('entityNotFound', ['entity' => 'Stock', 'identifier' => '1'], 'PhpAppCore')], 'MiCarteraBackend');
@@ -138,10 +140,10 @@ class StockOperateControllerTest extends ApplicationTestCase
         // set values on a form object
         $dateTime = new \DateTime('yesterday', new \DateTimeZone('UTC'));
         $formFields = [
-            $formName.'[datetime]' => $dateTime->format('Y-m-d H:i:s'),
-            $formName.'[amount]' => '100',
-            $formName.'[price]' => '3.4566',
-            $formName.'[expenses]' => '6.44',
+            $formName . '[datetime]' => $dateTime->format('Y-m-d H:i:s'),
+            $formName . '[amount]' => '100',
+            $formName . '[price]' => '3.4566',
+            $formName . '[expenses]' => '6.44',
         ];
 
         // test new
@@ -151,7 +153,7 @@ class StockOperateControllerTest extends ApplicationTestCase
         $this->assertSelectorTextContains('.flash-success', self::$translator->trans('actionCompletedSuccessfully'));
 
         // test domain exception
-        $formFields[$formName.'[amount]'] = 0;
+        $formFields[$formName . '[amount]'] = 0;
         $this->client->submit($form, $formFields);
         $this->assertRouteSame('stockoperate_new');
         $this->assertResponseIsSuccessful();
@@ -181,10 +183,10 @@ class StockOperateControllerTest extends ApplicationTestCase
         // set values on a form object
         $dateTime = new \DateTime('30 minutes ago', new \DateTimeZone('UTC'));
         $formFields = [
-            $formName.'[datetime]' => $dateTime->format('Y-m-d H:i:s'),
-            $formName.'[amount]' => '10',
-            $formName.'[price]' => '3.4566',
-            $formName.'[expenses]' => '6.44',
+            $formName . '[datetime]' => $dateTime->format('Y-m-d H:i:s'),
+            $formName . '[amount]' => '10',
+            $formName . '[price]' => '3.4566',
+            $formName . '[expenses]' => '6.44',
         ];
 
         // test new
@@ -194,16 +196,16 @@ class StockOperateControllerTest extends ApplicationTestCase
         $this->assertSelectorTextContains('.flash-success', self::$translator->trans('actionCompletedSuccessfully'));
 
         // test new with referer
-        $formFields[$formName.'[datetime]'] = (new \DateTime('29 minutes ago', new \DateTimeZone('UTC')))->format('Y-m-d H:i:s');
+        $formFields[$formName . '[datetime]'] = new \DateTime('29 minutes ago', new \DateTimeZone('UTC'))->format('Y-m-d H:i:s');
         $referer = 'http://localhost/en_GB/stockportfolio?page=3';
-        $formFields[$formName.'[refererPage]'] = $referer;
+        $formFields[$formName . '[refererPage]'] = $referer;
         $this->client->submit($form, $formFields);
         $this->assertResponseRedirects($referer, Response::HTTP_SEE_OTHER);
         $crawler = $this->client->followRedirect();
         $this->assertSelectorTextContains('.flash-success', self::$translator->trans('actionCompletedSuccessfully'));
 
         // test domain exception
-        $formFields[$formName.'[amount]'] = 0;
+        $formFields[$formName . '[amount]'] = 0;
         $this->client->submit($form, $formFields);
         $this->assertRouteSame('stockoperate_new');
         $this->assertResponseIsSuccessful();
@@ -276,7 +278,7 @@ class StockOperateControllerTest extends ApplicationTestCase
         $values = $form->getValues();
         $values['_token'] = 'BADTOKEN';
         $form->setValues($values);
-        $referer = 'http://localhost/en_GB/stockaccounting?year='.(new \DateTime('now', new \DateTimeZone('UTC')))->format('Y');
+        $referer = 'http://localhost/en_GB/stockaccounting?year=' . new \DateTime('now', new \DateTimeZone('UTC'))->format('Y');
         $this->client->setServerParameter('HTTP_REFERER', $referer);
         $crawler = $this->client->submit($form);
         $this->assertResponseRedirects($referer, Response::HTTP_SEE_OTHER);

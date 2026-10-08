@@ -63,9 +63,9 @@ Three specifics worth spelling out, because they are easy to get wrong:
 
 ## Everyday workflow
 
-- If `php`, `composer`, or `node` are not on `PATH`, check the project runtime via `devbox` and `mise` before assuming the tool is unavailable.
-- `devbox.json` defines the PHP runtime and extensions used for local work.
-- `mise.toml` defines the Node runtime from values loaded through `versions.env` and optional local env overrides.
+- Run PHP and Composer commands inside the project runtime with `devbox run -- <command>` (for example, `devbox run -- php bin/phpunit`, `devbox run -- vendor/bin/psalm`, or `devbox run -- composer install`). Do this even when PHP or Composer is not on the host `PATH`; don't treat a missing host binary as unavailable.
+- `devbox.json` defines the PHP runtime and extensions used for local work. Use `devbox run --` for PHP-based Symfony CLI commands too when needed (for example, `devbox run -- bin/console about`).
+- `mise.toml` defines the Node runtime from values loaded through `versions.env` and optional local env overrides. Use `mise` for project Node commands when Node isn't already available.
 - Run the app with `symfony serve -d`, and commands with `symfony console ...`
   (or `bin/console` when the Symfony CLI isn't available).
 - When something fails, read `var/log/dev.log` and the web profiler

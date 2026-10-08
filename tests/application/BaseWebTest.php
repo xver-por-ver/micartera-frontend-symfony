@@ -111,7 +111,7 @@ class BaseWebTest extends ApplicationTestCase
         foreach (self::$pages as $page) {
             if (!$page['public']) {
                 $crawler = $this->client->request('GET', $page['page']);
-                $this->assertResponseRedirects('http://localhost/'.$page['locale'].'/login', Response::HTTP_FOUND);
+                $this->assertResponseRedirects('http://localhost/' . $page['locale'] . '/login', Response::HTTP_FOUND);
             }
         }
     }
@@ -123,7 +123,7 @@ class BaseWebTest extends ApplicationTestCase
         foreach (self::$pages as $page) {
             if (!$page['public'] && !$page['redirect']) {
                 $crawler = $this->client->request('GET', $page['page']);
-                $this->assertResponseIsSuccessful('Requested page: '.$page['page']);
+                $this->assertResponseIsSuccessful('Requested page: ' . $page['page']);
             }
         }
     }
@@ -143,7 +143,7 @@ class BaseWebTest extends ApplicationTestCase
         foreach (self::$pages as $page) {
             if ($page['redirect']) {
                 $crawler = $this->client->request('GET', $page['page']);
-                $this->assertResponseRedirects('http://localhost'.$page['redirect'], Response::HTTP_FOUND);
+                $this->assertResponseRedirects('http://localhost' . $page['redirect'], Response::HTTP_FOUND);
             }
         }
     }
