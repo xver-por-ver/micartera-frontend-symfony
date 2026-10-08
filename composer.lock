@@ -8652,16 +8652,16 @@
         },
         {
             "name": "xver/micartera-domain",
-            "version": "2.0.1",
+            "version": "2.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/xver-por-ver/micartera-domain.git",
-                "reference": "7c7a793710654fc5b01585311470fa3efb01d498"
+                "reference": "cab963d8e80afc7ae8de4356e45c1c86fd56b51b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/xver-por-ver/micartera-domain/zipball/7c7a793710654fc5b01585311470fa3efb01d498",
-                "reference": "7c7a793710654fc5b01585311470fa3efb01d498",
+                "url": "https://api.github.com/repos/xver-por-ver/micartera-domain/zipball/cab963d8e80afc7ae8de4356e45c1c86fd56b51b",
+                "reference": "cab963d8e80afc7ae8de4356e45c1c86fd56b51b",
                 "shasum": ""
             },
             "require": {
@@ -8676,7 +8676,7 @@
                 "symfony/runtime": "^8.1",
                 "symfony/uid": "^8.1",
                 "symfony/yaml": "^8.1",
-                "xver/php-auth-core": "^2.0"
+                "xver/php-auth-core": "^3.0"
             },
             "require-dev": {
                 "doctrine/doctrine-fixtures-bundle": "^4.1",
@@ -8697,9 +8697,9 @@
             "description": "MiCartera Domain",
             "support": {
                 "issues": "https://github.com/xver-por-ver/micartera-domain/issues",
-                "source": "https://github.com/xver-por-ver/micartera-domain/tree/2.0.1"
+                "source": "https://github.com/xver-por-ver/micartera-domain/tree/2.0.2"
             },
-            "time": "2026-10-02T13:27:50+00:00"
+            "time": "2026-10-08T14:15:11+00:00"
         },
         {
             "name": "xver/php-app-core",
@@ -8746,16 +8746,16 @@
         },
         {
             "name": "xver/php-auth-core",
-            "version": "2.0.2",
+            "version": "3.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/xver-por-ver/php-auth-core.git",
-                "reference": "dc55d432dcc25275cae95f9b6e99d955e56dfc5d"
+                "reference": "981a8d34082c48647beaff4f17c846bda4f4db05"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/xver-por-ver/php-auth-core/zipball/dc55d432dcc25275cae95f9b6e99d955e56dfc5d",
-                "reference": "dc55d432dcc25275cae95f9b6e99d955e56dfc5d",
+                "url": "https://api.github.com/repos/xver-por-ver/php-auth-core/zipball/981a8d34082c48647beaff4f17c846bda4f4db05",
+                "reference": "981a8d34082c48647beaff4f17c846bda4f4db05",
                 "shasum": ""
             },
             "require": {
@@ -8780,7 +8780,7 @@
             "type": "symfony-bundle",
             "autoload": {
                 "psr-4": {
-                    "Xver\\SymfonyAuthBundle\\": "src/"
+                    "Xver\\PhpAuthCoreBundle\\": "src/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -8790,9 +8790,9 @@
             "description": "Provides Authentication",
             "support": {
                 "issues": "https://github.com/xver-por-ver/php-auth-core/issues",
-                "source": "https://github.com/xver-por-ver/php-auth-core/tree/2.0.2"
+                "source": "https://github.com/xver-por-ver/php-auth-core/tree/3.0.0"
             },
-            "time": "2026-10-02T13:19:53+00:00"
+            "time": "2026-10-08T12:24:02+00:00"
         }
     ],
     "packages-dev": [

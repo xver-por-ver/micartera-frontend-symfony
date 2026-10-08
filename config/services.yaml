@@ -31,11 +31,11 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
-    Xver\SymfonyAuthBundle\Auth\Application\AuthProvider:
+    Xver\PhpAuthCoreBundle\Auth\Application\AuthProvider:
         arguments:
             - '@Xver\MiCartera\Domain\Account\Application\Query\AccountQuery'
 
-    Xver\SymfonyAuthBundle\Account\Domain\AccountPersistenceInterface: '@Xver\MiCartera\Domain\Account\Infrastructure\Doctrine\AccountPersistence'
+    Xver\PhpAuthCoreBundle\Account\Domain\AccountPersistenceInterface: '@Xver\MiCartera\Domain\Account\Infrastructure\Doctrine\AccountPersistence'
 
 when@test:
     services:

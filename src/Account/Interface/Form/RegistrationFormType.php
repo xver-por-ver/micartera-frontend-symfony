@@ -10,7 +10,7 @@ use Symfony\Component\Form\Extension\Core\Type\TimezoneType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatableMessage;
-use Xver\SymfonyAuthBundle\Account\Interface\Web\Form\RegistrationFormType as FormRegistrationFormType;
+use Xver\PhpAuthCoreBundle\Account\Interface\Web\Form\RegistrationFormType as FormRegistrationFormType;
 use Xver\MiCartera\Domain\Currency\Application\Query\CurrencyQuery;
 use Xver\MiCartera\Domain\Currency\Domain\CurrencyPersistenceInterface;
 

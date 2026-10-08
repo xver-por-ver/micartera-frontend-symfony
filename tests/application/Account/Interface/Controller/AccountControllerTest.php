@@ -61,7 +61,7 @@ class AccountControllerTest extends ApplicationTestCase
         $crawler = $this->client->submit($form, $formFields);
         $this->assertRouteSame('app_register');
         $this->assertResponseIsSuccessful();
-        $this->assertSelectorTextContains('.flash-error', self::$translator->trans('accountEmailExists', [], 'SymfonyAuthBundle'));
+        $this->assertSelectorTextContains('.flash-error', self::$translator->trans('accountEmailExists', [], 'PhpAuthCoreBundle'));
 
         // symfony form validation
         $formFields = [

@@ -1,12 +1,12 @@
 security:
     # https://symfony.com/doc/current/security.html#registering-the-user-hashing-passwords
     password_hashers:
-        Xver\SymfonyAuthBundle\Auth\Domain\AuthUser:
+        Xver\PhpAuthCoreBundle\Auth\Domain\AuthUser:
             algorithm: auto
     # https://symfony.com/doc/current/security.html#loading-the-user-the-user-provider
     providers:
         app_user_provider:
-            id: Xver\SymfonyAuthBundle\Auth\Application\AuthProvider
+            id: Xver\PhpAuthCoreBundle\Auth\Application\AuthProvider
 
     firewalls:
         dev:

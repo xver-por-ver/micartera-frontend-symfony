@@ -12,6 +12,6 @@ return [
     Twig\Extra\TwigExtraBundle\TwigExtraBundle::class => ['all' => true],
     Symfony\Bundle\DebugBundle\DebugBundle::class => ['dev' => true],
     Doctrine\Bundle\FixturesBundle\DoctrineFixturesBundle::class => ['dev' => true, 'test' => true],
-    Xver\SymfonyAuthBundle\SymfonyAuthBundle::class => ['all' => true],
+    Xver\PhpAuthCoreBundle\PhpAuthCoreBundle::class => ['all' => true],
     Xver\PhpAppCoreBundle\PhpAppCoreBundle::class => ['all' => true],
 ];

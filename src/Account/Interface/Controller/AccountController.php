@@ -12,7 +12,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Xver\PhpAppCoreBundle\Exception\Domain\DomainExceptionTranslator;
-use Xver\SymfonyAuthBundle\Auth\Domain\AuthUser;
+use Xver\PhpAuthCoreBundle\Auth\Domain\AuthUser;
 use Xver\MiCartera\Domain\Account\Application\Command\AccountCreateCommand;
 use Xver\MiCartera\Domain\Account\Domain\AccountPersistenceInterface;
 use Xver\MiCartera\Frontend\Symfony\Account\Interface\Form\RegistrationFormType;
@@ -45,7 +45,7 @@ final class AccountController extends AbstractController
                 'last_username' => $lastUsername,
                 'error' => $error,
                 'formFooterLinks' => [
-                    ['href' => $this->generateUrl('app_register'), 'text' => $translator->trans('signUp', [], 'SymfonyAuthBundle')],
+                    ['href' => $this->generateUrl('app_register'), 'text' => $translator->trans('signUp', [], 'PhpAuthCoreBundle')],
                 ],
             ],
             is_null($error) ? null : new Response('', 401)
@@ -138,10 +138,10 @@ final class AccountController extends AbstractController
             'form/reusable_form.html.twig',
             [
                 'form' => $form,
-                'formTitle' => $translator->trans('signUp', [], 'SymfonyAuthBundle'),
-                'formSubmit' => $translator->trans('signUp', [], 'SymfonyAuthBundle'),
+                'formTitle' => $translator->trans('signUp', [], 'PhpAuthCoreBundle'),
+                'formSubmit' => $translator->trans('signUp', [], 'PhpAuthCoreBundle'),
                 'formFooterLinks' => [
-                    ['href' => $this->generateUrl('app_login'), 'text' => $translator->trans('signIn', [], 'SymfonyAuthBundle')],
+                    ['href' => $this->generateUrl('app_login'), 'text' => $translator->trans('signIn', [], 'PhpAuthCoreBundle')],
                 ],
             ]
         );

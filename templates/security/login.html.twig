@@ -5,31 +5,31 @@
     {{ encore_entry_link_tags('form') }}
 {% endblock %}
 
-{% block title %}{{ 'signIn'|trans({}, 'SymfonyAuthBundle') }}{% endblock %}
+{% block title %}{{ 'signIn'|trans({}, 'PhpAuthCoreBundle') }}{% endblock %}
 
 {% block body %}
 <form action="{{ path('app_login') }}" method="post" class="centeredForm">
     {% if formHeaderRoute is defined %}
     <h1><a href="{{ path(formHeaderRoute) }}" class="actionItem">{{ formHeaderText is defined ? formHeaderText : 'home'|trans }}</a></h1>
-    <h2>{{ 'signIn'|trans({}, 'SymfonyAuthBundle') }}</h2>
+    <h2>{{ 'signIn'|trans({}, 'PhpAuthCoreBundle') }}</h2>
     {% else %}
-    <h1>{{ 'signIn'|trans({}, 'SymfonyAuthBundle') }}</h1>
+    <h1>{{ 'signIn'|trans({}, 'PhpAuthCoreBundle') }}</h1>
     {% endif %}
     {% if error %}
         <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
     {% endif %}
     <div>
-        <label for="_username">{{ 'email'|trans({}, 'SymfonyAuthBundle') }}</label>
+        <label for="_username">{{ 'email'|trans({}, 'PhpAuthCoreBundle') }}</label>
         <input type="text" value="{{ last_username }}" name="_username" id="_username" autocomplete="username" required>
     </div>
     <div>
-        <label for="_password">{{ 'password'|trans({}, 'SymfonyAuthBundle') }}</label>
+        <label for="_password">{{ 'password'|trans({}, 'PhpAuthCoreBundle') }}</label>
         <input type="password" name="_password" id="_password" autocomplete="current-password" required>
     </div>
     <div>
         <input type="hidden" name="_csrf_token" data-controller="csrf-protection" value="{{ csrf_token('authenticate') }}">
     </div>
-    <button type="submit">{{ 'signIn'|trans({}, 'SymfonyAuthBundle') }}</button>
+    <button type="submit">{{ 'signIn'|trans({}, 'PhpAuthCoreBundle') }}</button>
 {% if formFooterLinks is defined %}
     {% for link in formFooterLinks %}
         <a href="{{ link.href }}" class="actionItem">{{ link.text }}</a>
