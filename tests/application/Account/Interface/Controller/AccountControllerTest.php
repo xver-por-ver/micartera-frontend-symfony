@@ -5,16 +5,19 @@ declare(strict_types=1);
 namespace Tests\application\Account\Interface\Controller;
 
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\UsesClass;
 use Symfony\Component\HttpFoundation\Response;
 use Tests\application\ApplicationTestCase;
 use Xver\MiCartera\Frontend\Symfony\Account\Interface\Controller\AccountController;
 use Xver\MiCartera\Frontend\Symfony\Account\Interface\Form\RegistrationFormType;
+use Xver\MiCartera\Frontend\Symfony\Kernel;
 
 /**
  * @internal
  */
 #[CoversClass(AccountController::class)]
 #[CoversClass(RegistrationFormType::class)]
+#[UsesClass(Kernel::class)]
 class AccountControllerTest extends ApplicationTestCase
 {
     public function testRegister(): void
@@ -32,12 +35,12 @@ class AccountControllerTest extends ApplicationTestCase
 
         // set values on a form object
         $formFields = [
-            $formName.'[email]' => 'test2@example.com',
-            $formName.'[plainPassword][first]' => 'password',
-            $formName.'[plainPassword][second]' => 'password',
-            $formName.'[currency]' => 'EUR',
-            $formName.'[timezone]' => 'Europe/Madrid',
-            $formName.'[agreeTerms]' => '1',
+            $formName . '[email]' => 'test2@example.com',
+            $formName . '[plainPassword][first]' => 'password',
+            $formName . '[plainPassword][second]' => 'password',
+            $formName . '[currency]' => 'EUR',
+            $formName . '[timezone]' => 'Europe/Madrid',
+            $formName . '[agreeTerms]' => '1',
         ];
 
         // test new
@@ -48,12 +51,12 @@ class AccountControllerTest extends ApplicationTestCase
 
         // test domain exception
         $formFields = [
-            $formName.'[email]' => 'test@example.com',
-            $formName.'[plainPassword][first]' => 'password',
-            $formName.'[plainPassword][second]' => 'password',
-            $formName.'[currency]' => 'EUR',
-            $formName.'[timezone]' => 'Europe/Madrid',
-            $formName.'[agreeTerms]' => '1',
+            $formName . '[email]' => 'test@example.com',
+            $formName . '[plainPassword][first]' => 'password',
+            $formName . '[plainPassword][second]' => 'password',
+            $formName . '[currency]' => 'EUR',
+            $formName . '[timezone]' => 'Europe/Madrid',
+            $formName . '[agreeTerms]' => '1',
         ];
         $crawler = $this->client->submit($form, $formFields);
         $this->assertRouteSame('app_register');
@@ -62,12 +65,12 @@ class AccountControllerTest extends ApplicationTestCase
 
         // symfony form validation
         $formFields = [
-            $formName.'[email]' => 'test2@example.com',
-            $formName.'[plainPassword][first]' => '123456',
-            $formName.'[plainPassword][second]' => '123456',
-            $formName.'[currency]' => 'EUR',
-            $formName.'[timezone]' => 'Europe/Madrid',
-            $formName.'[agreeTerms]' => '1',
+            $formName . '[email]' => 'test2@example.com',
+            $formName . '[plainPassword][first]' => '123456',
+            $formName . '[plainPassword][second]' => '123456',
+            $formName . '[currency]' => 'EUR',
+            $formName . '[timezone]' => 'Europe/Madrid',
+            $formName . '[agreeTerms]' => '1',
         ];
         $this->client->submit($form, $formFields);
         $this->assertRouteSame('app_register');

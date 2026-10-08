@@ -42,7 +42,7 @@ class ApplicationTestCase extends WebTestCase
 
     public static function getAuthUser(): AuthUser
     {
-        self::$authUser ?? self::$authUser = (new AuthProvider(new AccountQuery(new AccountPersistence(self::$registry))))->loadUserByIdentifier('test@example.com');
+        self::$authUser ?? self::$authUser = new AuthProvider(new AccountQuery(new AccountPersistence(self::$registry)))->loadUserByIdentifier('test@example.com');
 
         return self::$authUser;
     }

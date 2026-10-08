@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Xver\MiCartera\Frontend\Symfony\Stock\Interface\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -20,6 +22,8 @@ use Xver\MiCartera\Domain\Stock\Application\Query\Portfolio\PortfolioQuery;
 use Xver\MiCartera\Domain\Stock\Application\Query\StockQuery;
 use Xver\MiCartera\Domain\Stock\Domain\StockPersistenceInterface;
 use Xver\MiCartera\Domain\Stock\Domain\Transaction\AcquisitionPersistenceInterface;
+use Xver\MiCartera\Frontend\Symfony\Stock\Interface\Form\NumericStringData;
+use Xver\MiCartera\Frontend\Symfony\Stock\Interface\Form\NumericStringFormData;
 use Xver\MiCartera\Frontend\Symfony\Stock\Interface\Form\StockType;
 
 #[Route('/{_locale<%app.locales%>}/stock', name: 'stock_')]
@@ -56,16 +60,14 @@ final class StockController extends AbstractController
         DomainExceptionTranslator $exceptionTranslator,
         AccountPersistenceInterface $accountPersistence,
         StockPersistenceInterface $stockPersistence,
-        ExchangePersistenceInterface $exchangePersistence
+        ExchangePersistenceInterface $exchangePersistence,
+        NumericStringData $numericStringData
     ): RedirectResponse|Response {
         $form = $this->createForm(StockType::class);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             try {
                 $command = new StockCreateCommand($stockPersistence, $accountPersistence, $exchangePersistence);
-
-                /** @psalm-var numeric-string */
-                $price = $form->get('price')->getData();
 
                 /** @psalm-suppress PossiblyNullReference */
                 $userIdentifier = $this->getUser()->getUserIdentifier();
@@ -75,7 +77,7 @@ final class StockController extends AbstractController
                 $command->invoke(
                     (string) $form->get('code')->getData(),
                     (string) $form->get('name')->getData(),
-                    $price,
+                    $numericStringData->from($form, 'price'),
                     $userIdentifier,
                     $exchange->getCode()
                 );
@@ -100,7 +102,8 @@ final class StockController extends AbstractController
         DomainExceptionTranslator $exceptionTranslator,
         AccountPersistenceInterface $accountPersistence,
         StockPersistenceInterface $stockPersistence,
-        AcquisitionPersistenceInterface $acquisitionPersistence
+        AcquisitionPersistenceInterface $acquisitionPersistence,
+        NumericStringData $numericStringData
     ): RedirectResponse|Response {
         $request->isMethod('GET')
             ? $formData = [
@@ -116,10 +119,7 @@ final class StockController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             try {
                 $command = new StockUpdateCommand($stockPersistence);
-
-                /** @psalm-var numeric-string */
-                $price = $form->get('price')->getData();
-                $command->invoke((string) $formData['code'], (string) $form->get('name')->getData(), $price);
+                $command->invoke((string) $formData['code'], (string) $form->get('name')->getData(), $numericStringData->from($form, 'price'));
                 $this->addFlash('success', $translator->trans('actionCompletedSuccessfully'));
 
                 return
@@ -155,7 +155,7 @@ final class StockController extends AbstractController
     ): RedirectResponse|Response {
         /** @psalm-var string */
         $id = $request->attributes->get('id');
-        if (false === $this->isCsrfTokenValid('delete'.$id, (string) $request->request->get('_token'))) {
+        if (false === $this->isCsrfTokenValid('delete' . $id, (string) $request->request->get('_token'))) {
             $this->addFlash('error', $translator->trans('invalidFormToken'));
         } else {
             try {
