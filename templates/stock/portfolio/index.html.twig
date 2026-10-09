@@ -95,6 +95,7 @@
                     </td>
                     <td class="actions">
                         <a href="{{ path('stockoperate_new', {'type': 'sell', 'stock': portfolioPosition.stock.getId()}) }}" class="actionItem">{{ 'sell' | trans }}</a>
+                        <a href="{{ path('cashdividend_new', {'stock': portfolioPosition.stock.getId()}) }}" class="actionItem">{{ 'createCashDividend' | trans }}</a>
                         {{ include('stock/portfolio/_delete_form.html.twig') }}
                     </td>
                 </tr>

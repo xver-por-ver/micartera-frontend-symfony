@@ -29,6 +29,14 @@
         <source>expensesWithCurrencySymbol</source>
         <target>Expenses ({symbol})</target>
       </trans-unit>
+      <trans-unit id="dividendPerShareWithCurrencySymbol">
+        <source>dividendPerShareWithCurrencySymbol</source>
+        <target>Dividend per share ({symbol})</target>
+      </trans-unit>
+      <trans-unit id="createCashDividend">
+        <source>createCashDividend</source>
+        <target>Record dividend</target>
+      </trans-unit>
       <trans-unit id="update">
         <source>update</source>
         <target>Update</target>
