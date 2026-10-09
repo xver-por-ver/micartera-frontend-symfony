@@ -9,6 +9,7 @@ use PHPUnit\Framework\Attributes\UsesClass;
 use Symfony\Component\HttpFoundation\Response;
 use Tests\application\ApplicationTestCase;
 use Xver\MiCartera\Frontend\Symfony\Stock\Interface\Controller\CashDividendController;
+use Xver\MiCartera\Frontend\Symfony\Stock\Interface\Controller\StockController;
 use Xver\MiCartera\Frontend\Symfony\Stock\Interface\Controller\StockPortfolioController;
 use Xver\MiCartera\Frontend\Symfony\Stock\Interface\Form\CashDividendType;
 use Xver\MiCartera\Frontend\Symfony\Stock\Interface\Form\NumericStringData;
@@ -16,6 +17,7 @@ use Xver\MiCartera\Frontend\Symfony\Stock\Interface\Form\NumericStringData;
 #[CoversClass(CashDividendController::class)]
 #[CoversClass(CashDividendType::class)]
 #[UsesClass(NumericStringData::class)]
+#[UsesClass(StockController::class)]
 #[UsesClass(StockPortfolioController::class)]
 class CashDividendControllerTest extends ApplicationTestCase
 {
@@ -50,6 +52,9 @@ class CashDividendControllerTest extends ApplicationTestCase
         );
 
         $crawler = $this->client->request('GET', '/en_GB/stockportfolio');
+        self::assertSelectorExists('a[href="/en_GB/cashdividend/new/CABK"]');
+
+        $this->client->request('GET', '/en_GB/stock');
         self::assertSelectorExists('a[href="/en_GB/cashdividend/new/CABK"]');
     }
 }
