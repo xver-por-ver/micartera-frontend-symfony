@@ -57,4 +57,22 @@ class CashDividendControllerTest extends ApplicationTestCase
         $this->client->request('GET', '/en_GB/stock');
         self::assertSelectorExists('a[href="/en_GB/cashdividend/new/CABK"]');
     }
+
+    public function testShowsHelpfulErrorWhenAccountHadNoHoldingOnDividendDate(): void
+    {
+        $this->client->loginUser(self::getAuthUser());
+        $crawler = $this->client->request('GET', '/en_GB/cashdividend/new/ROVI');
+        $form = $crawler->selectButton('cash_dividend_cmdSubmit')->form();
+        $this->client->submit($form, [
+            'cash_dividend[datetime]' => new \DateTime('yesterday', new \DateTimeZone('UTC'))->format('Y-m-d H:i:s'),
+            'cash_dividend[dividendPerShare]' => '0.25',
+            'cash_dividend[expenses]' => '0',
+        ]);
+
+        self::assertResponseIsSuccessful();
+        self::assertSelectorTextContains(
+            '.flash-error',
+            self::$translator->trans('dividendRequiresPositiveHolding', [], 'MiCarteraDomain')
+        );
+    }
 }

@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Xver\MiCartera\Domain\Stock\Application\Command\Dividend\CashDividendCreateCommand;
+use Xver\MiCartera\Domain\Stock\Domain\Dividend\CashDividendAmountException;
 use Xver\MiCartera\Domain\Stock\Domain\Dividend\CashDividendPersistenceInterface;
 use Xver\MiCartera\Domain\Account\Domain\AccountPersistenceInterface;
 use Xver\MiCartera\Domain\Stock\Domain\StockPersistenceInterface;
@@ -60,6 +61,8 @@ final class CashDividendController extends AbstractController
                 $this->addFlash('success', $translator->trans('actionCompletedSuccessfully'));
 
                 return $this->redirectToRoute('stockportfolio_index', [], Response::HTTP_SEE_OTHER);
+            } catch (CashDividendAmountException $exception) {
+                $this->addFlash('error', $exception->getTranslatableMessage()->trans($translator));
             } catch (DomainViolationException $exception) {
                 $this->addFlash('error', $exceptionTranslator->getTranslatedException($exception, $translator)->getMessage());
             }
