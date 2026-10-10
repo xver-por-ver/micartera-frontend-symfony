@@ -26,7 +26,8 @@ class CashDividendControllerTest extends ApplicationTestCase
     public function testCreateCashDividendForPortfolioStock(): void
     {
         $this->client->loginUser(self::getAuthUser());
-        $crawler = $this->client->request('GET', '/en_GB/cashdividend/new/CABK');
+        $crawler = $this->client->request('GET', '/en_GB/stock');
+        $crawler = $this->client->click($crawler->selectLink('Record dividend')->link());
         self::assertResponseIsSuccessful();
 
         $form = $crawler->selectButton('cash_dividend_cmdSubmit')->form();
@@ -36,7 +37,7 @@ class CashDividendControllerTest extends ApplicationTestCase
             'cash_dividend[expenses]' => '0',
         ]);
 
-        self::assertResponseRedirects('/en_GB/stockportfolio', Response::HTTP_SEE_OTHER);
+        self::assertResponseRedirects('/en_GB/stock', Response::HTTP_SEE_OTHER);
         $this->client->followRedirect();
         self::assertSelectorTextContains('.flash-success', self::$translator->trans('actionCompletedSuccessfully'));
 

@@ -7,6 +7,7 @@ namespace Xver\MiCartera\Frontend\Symfony\Stock\Interface\Form;
 use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -60,6 +61,7 @@ final class CashDividendType extends AbstractType
                 'attr' => ['step' => '1e-' . $account->getCurrency()->getDecimals()],
                 'label' => new TranslatableMessage('expensesWithCurrencySymbol', ['symbol' => $account->getCurrency()->getSymbol()]),
             ])
+            ->add('refererPage', HiddenType::class)
             ->add('cmdSubmit', SubmitType::class, ['label' => new TranslatableMessage($options['submit_label'])]);
     }
 

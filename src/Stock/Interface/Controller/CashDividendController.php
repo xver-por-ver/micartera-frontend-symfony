@@ -40,7 +40,9 @@ final class CashDividendController extends AbstractController
         StockPersistenceInterface $stockPersistence,
         NumericStringData $numericStringData
     ): Response {
-        $form = $this->createForm(CashDividendType::class);
+        $form = $this->createForm(CashDividendType::class, [
+            'refererPage' => $request->headers->get('referer', ''),
+        ]);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             try {
@@ -63,7 +65,7 @@ final class CashDividendController extends AbstractController
                 );
                 $this->addFlash('success', $translator->trans('actionCompletedSuccessfully'));
 
-                return $this->redirectToRoute('stockportfolio_index', [], Response::HTTP_SEE_OTHER);
+                return $this->redirectToPreviousPage($request, (string) $form->get('refererPage')->getData());
             } catch (CashDividendAmountException $exception) {
                 $this->addFlash('error', $exception->getTranslatableMessage()->trans($translator));
             } catch (DomainViolationException $exception) {
@@ -72,6 +74,33 @@ final class CashDividendController extends AbstractController
         }
 
         return $this->render('stock/dividend/form.html.twig', ['form' => $form, 'stockCode' => $stock]);
+    }
+
+    private function redirectToPreviousPage(Request $request, string $referer): Response
+    {
+        $url = parse_url($referer);
+        if (false === $url) {
+            return $this->redirectToRoute('stockportfolio_index', [], Response::HTTP_SEE_OTHER);
+        }
+
+        $locale = (string) $request->attributes->get('_locale');
+        $expectedOrigin = parse_url($request->getSchemeAndHttpHost());
+        $sameOrigin = !isset($url['host']) || (
+            ($url['scheme'] ?? null) === ($expectedOrigin['scheme'] ?? null)
+            && $url['host'] === ($expectedOrigin['host'] ?? null)
+            && ($url['port'] ?? null) === ($expectedOrigin['port'] ?? null)
+        );
+        $path = $url['path'] ?? '';
+
+        if (
+            $sameOrigin
+            && str_starts_with($path, '/' . $locale . '/')
+            && !str_starts_with($path, '//')
+        ) {
+            return $this->redirect($referer, Response::HTTP_SEE_OTHER);
+        }
+
+        return $this->redirectToRoute('stockportfolio_index', [], Response::HTTP_SEE_OTHER);
     }
 
     #[Route('/{id}', name: 'delete', methods: ['DELETE'])]
