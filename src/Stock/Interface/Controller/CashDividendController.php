@@ -76,11 +76,15 @@ final class CashDividendController extends AbstractController
         return $this->render('stock/dividend/form.html.twig', ['form' => $form, 'stockCode' => $stock]);
     }
 
-    private function redirectToPreviousPage(Request $request, string $referer): Response
-    {
+    private function redirectToPreviousPage(
+        Request $request,
+        string $referer,
+        string $fallbackRoute = 'stockportfolio_index',
+        array $fallbackParameters = []
+    ): Response {
         $url = parse_url($referer);
         if (false === $url) {
-            return $this->redirectToRoute('stockportfolio_index', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute($fallbackRoute, $fallbackParameters, Response::HTTP_SEE_OTHER);
         }
 
         $locale = (string) $request->attributes->get('_locale');
@@ -100,7 +104,7 @@ final class CashDividendController extends AbstractController
             return $this->redirect($referer, Response::HTTP_SEE_OTHER);
         }
 
-        return $this->redirectToRoute('stockportfolio_index', [], Response::HTTP_SEE_OTHER);
+        return $this->redirectToRoute($fallbackRoute, $fallbackParameters, Response::HTTP_SEE_OTHER);
     }
 
     #[Route('/{id}', name: 'delete', methods: ['DELETE'])]
@@ -124,16 +128,26 @@ final class CashDividendController extends AbstractController
             $this->addFlash('error', $translator->trans('invalidFormToken'));
         } else {
             try {
-                (new CashDividendDeleteCommand($cashDividendPersistence))->invoke($id);
+                new CashDividendDeleteCommand($cashDividendPersistence)->invoke($id);
                 $this->addFlash('success', $translator->trans('actionCompletedSuccessfully'));
 
-                return $this->redirectToRoute('stock_update', ['id' => $cashDividend->getStock()->getId()], Response::HTTP_SEE_OTHER);
+                return $this->redirectToPreviousPage(
+                    $request,
+                    (string) $request->request->get('returnTo', ''),
+                    'stock_update',
+                    ['id' => $cashDividend->getStock()->getId()]
+                );
             } catch (DomainViolationException $exception) {
                 $this->addFlash('error', $exceptionTranslator->getTranslatedException($exception, $translator)->getMessage());
             }
         }
 
-        return $this->redirectToRoute('stock_update', ['id' => $cashDividend->getStock()->getId()], Response::HTTP_SEE_OTHER);
+        return $this->redirectToPreviousPage(
+            $request,
+            (string) $request->request->get('returnTo', ''),
+            'stock_update',
+            ['id' => $cashDividend->getStock()->getId()]
+        );
     }
 
     #[Route('/{id}/edit', name: 'edit', methods: ['GET', 'POST'])]
@@ -157,6 +171,7 @@ final class CashDividendController extends AbstractController
         $form = $this->createForm(CashDividendType::class, [
             'dividendPerShare' => $cashDividend->getDividendPerShare()->getValue(),
             'expenses' => $cashDividend->getExpenses()->getValue(),
+            'refererPage' => $request->headers->get('referer', ''),
         ], [
             'include_datetime' => false,
             'submit_label' => 'updateCashDividend',
@@ -164,14 +179,19 @@ final class CashDividendController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             try {
-                (new CashDividendUpdateCommand($cashDividendPersistence))->invoke(
+                new CashDividendUpdateCommand($cashDividendPersistence)->invoke(
                     $id,
                     $numericStringData->from($form, 'dividendPerShare'),
                     $numericStringData->from($form, 'expenses')
                 );
                 $this->addFlash('success', $translator->trans('actionCompletedSuccessfully'));
 
-                return $this->redirectToRoute('stock_update', ['id' => $cashDividend->getStock()->getId()], Response::HTTP_SEE_OTHER);
+                return $this->redirectToPreviousPage(
+                    $request,
+                    (string) $form->get('refererPage')->getData(),
+                    'stock_update',
+                    ['id' => $cashDividend->getStock()->getId()]
+                );
             } catch (DomainViolationException $exception) {
                 $this->addFlash('error', $exceptionTranslator->getTranslatedException($exception, $translator)->getMessage());
             }

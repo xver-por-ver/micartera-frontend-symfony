@@ -71,11 +71,35 @@ class CashDividendControllerTest extends ApplicationTestCase
         self::assertSelectorTextContains('#cash-dividends tbody tr', '0.3');
         self::assertSelectorTextContains('#cash-dividends tbody tr', '0.5');
 
-        $this->client->request('GET', '/en_GB/stockaccounting');
+        $crawler = $this->client->request('GET', '/en_GB/stockaccounting');
         self::assertSelectorTextContains('#stock-accounting-summary', '60');
         self::assertSelectorTextContains('#stock-accounting-summary', '0.5');
         self::assertSelectorTextContains('#stock-accounting-summary', '59.5');
         self::assertSelectorExists('#accounting-year');
+        self::assertSelectorExists('#accounting-event-tabs [role="tab"]');
+        self::assertSelectorTextContains('#dividend-events tbody tr', 'CABK');
+        self::assertSelectorTextContains('#dividend-events tbody tr', '0.3');
+        self::assertSelectorTextContains('#dividend-events tbody tr', '60');
+        self::assertSelectorExists('#dividend-events a[href$="/edit"]');
+        self::assertSelectorExists('#dividend-events form.deleteForm');
+        self::assertSelectorExists('#dividends-panel[hidden]');
+        self::assertSelectorExists('#accounting-year-form input[name="view"][value="stocks"]');
+        $selectedYear = $crawler->filter('#accounting-year option[selected]')->attr('value');
+        $crawler = $this->client->request('GET', '/en_GB/stockaccounting?year=' . $selectedYear . '&view=dividends');
+        self::assertSelectorExists('#dividends-tab[aria-selected="true"]');
+        self::assertSelectorExists('#dividends-panel:not([hidden])');
+        self::assertSelectorExists('#stocks-panel[hidden]');
+        self::assertSelectorExists('form input[name="view"][value="dividends"]');
+        $crawler = $this->client->click($crawler->filter('#dividend-events a[href$="/edit"]')->link());
+        $editForm = $crawler->selectButton('cash_dividend_cmdSubmit')->form();
+        $this->client->submit($editForm, [
+            'cash_dividend[dividendPerShare]' => '0.30',
+            'cash_dividend[expenses]' => '0.60',
+        ]);
+        self::assertResponseRedirects('/en_GB/stockaccounting?year=' . $selectedYear . '&view=dividends', Response::HTTP_SEE_OTHER);
+        $crawler = $this->client->followRedirect();
+        self::assertSelectorExists('#dividends-panel:not([hidden])');
+        self::assertSelectorTextContains('#dividend-events tbody tr', '0.6');
 
         $crawler = $this->client->request('GET', '/en_GB/stock/CABK');
         $deleteForm = $crawler->filter('#cash-dividends form.deleteForm')->form();

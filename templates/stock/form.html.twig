@@ -29,9 +29,9 @@
             <tr>
                 <th scope="col">{{ 'dateWithTZ'|trans({'timezone': timezone}) }}</th>
                 <th scope="col">{{ 'shares'|trans }}</th>
-                <th scope="col">{{ 'dividendPerShareWithCurrencySymbol'|trans({'symbol': currencysymbol}) }}</th>
-                <th scope="col">{{ 'totalDividendPayment'|trans }} {{ currencysymbol }}</th>
-                <th scope="col">{{ 'expensesWithCurrencySymbol'|trans({'symbol': currencysymbol}) }}</th>
+                <th scope="col">{{ 'perShare'|trans({'currency': currencysymbol}) }}</th>
+                <th scope="col">{{ 'gross'|trans({'currency': currencysymbol}) }}</th>
+                <th scope="col">{{ 'expenses'|trans({'currency': currencysymbol}) }}</th>
                 <th scope="col">{{ 'actions'|trans }}</th>
             </tr>
         </thead>
@@ -40,7 +40,7 @@
                 <tr>
                     <td>{{ cashDividend.getDateTimeUtc()|date('Y M d H:i:s', timezone) }}</td>
                     <td class="number">{{ include('reusables/format_number/transactionAmount.html.twig', {number: cashDividend.getAmount().getValue()}) }}</td>
-                    <td class="number">{{ include('reusables/format_number/stock.html.twig', {number: cashDividend.getDividendPerShare().getValue()}) }}</td>
+                    <td class="number">{{ include('reusables/format_number/decimal.html.twig', {number: cashDividend.getDividendPerShare().getValue()}) }}</td>
                     <td class="number">{{ include('reusables/format_number/decimal.html.twig', {number: cashDividend.getTotalDividendPayment().getValue()}) }}</td>
                     <td class="number">{{ include('reusables/format_number/decimal.html.twig', {number: cashDividend.getExpenses().getValue()}) }}</td>
                     <td>

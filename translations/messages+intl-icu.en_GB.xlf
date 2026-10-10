@@ -49,6 +49,22 @@
         <source>stockRealizations</source>
         <target>Stock realizations</target>
       </trans-unit>
+      <trans-unit id="accountingEventLists">
+        <source>accountingEventLists</source>
+        <target>Accounting event lists</target>
+      </trans-unit>
+      <trans-unit id="stocksTab">
+        <source>stocksTab</source>
+        <target>Stocks</target>
+      </trans-unit>
+      <trans-unit id="dividendsTab">
+        <source>dividendsTab</source>
+        <target>Dividends</target>
+      </trans-unit>
+      <trans-unit id="yearDividendEvents">
+        <source>yearDividendEvents</source>
+        <target>{year} Dividend events</target>
+      </trans-unit>
       <trans-unit id="period">
         <source>period</source>
         <target>Period</target>
@@ -142,6 +158,10 @@
         <source>submit</source>
         <target>Submit</target>
       </trans-unit>
+      <trans-unit id="yearStockEvents">
+        <source>yearStockEvents</source>
+        <target>{year} Stock Events</target>
+      </trans-unit>
       <trans-unit id="editStock">
         <source>editStock</source>
         <target>Edit stock</target>
@@ -204,7 +224,7 @@
       </trans-unit>
       <trans-unit id="perShare">
         <source>perShare</source>
-        <target>Per Share</target>
+        <target>Per Share {currency}</target>
       </trans-unit>
       <trans-unit id="expenses">
         <source>expenses</source>

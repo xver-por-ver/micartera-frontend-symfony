@@ -9,6 +9,7 @@
 {% block title %}{{ 'accounting'|trans|capitalize }}{% endblock %}
 
 {% block body %}
+    {% set activeEventTab = app.request.query.get('view') == 'dividends' ? 'dividends' : 'stocks' %}
     <h1>{{ 'accounting'|trans|capitalize }}</h1>
 
     {% set timezone =  accounting.getAccount().getTimeZone() %}
@@ -88,12 +89,15 @@
             </tr>
             <tr>
                 <td>
-                    <label for="accounting-year">{{ 'year'|trans }}</label>
-                    <select id="accounting-year" name="year" onchange="document.location.href='?year='+this.value;">
-                        {% for year in accounting.getYearFirstOperation()..accounting.getCurrentYear() %}
-                            <option value="{{ year }}"{% if accounting.getDisplayedYear() == year %} selected="selected"{% endif %}>{{ year }}</option>
-                        {% endfor %}
-                    </select>
+                    <form id="accounting-year-form" method="get" action="{{ path('stockaccounting_index') }}">
+                        <input type="hidden" name="view" value="{{ activeEventTab }}" />
+                        <label for="accounting-year">{{ 'year'|trans }}</label>
+                        <select id="accounting-year" name="year" onchange="this.form.submit()">
+                            {% for year in accounting.getYearFirstOperation()..accounting.getCurrentYear() %}
+                                <option value="{{ year }}"{% if accounting.getDisplayedYear() == year %} selected="selected"{% endif %}>{{ year }}</option>
+                            {% endfor %}
+                        </select>
+                    </form>
                 </td>
                 <td class="number">{{ include('reusables/format_number/decimal.html.twig', {number: accounting.getSummary().getDisplayedYearAcquisitionsPrice().getValue()}) }}</td>
                 <td class="number">{{ include('reusables/format_number/decimal.html.twig', {number: accounting.getSummary().getDisplayedYearLiquidationsPrice().getValue()}) }}</td>
@@ -115,7 +119,13 @@
     </table>
 
 
-    <h2>{{ 'detail' | trans }} {{ accounting.getDisplayedYear() }}</h2>
+    <div id="accounting-event-tabs" role="tablist" aria-label="{{ 'accountingEventLists'|trans }}">
+        <button type="button" id="stocks-tab" role="tab" aria-selected="{{ activeEventTab == 'stocks' ? 'true' : 'false' }}" aria-controls="stocks-panel"{% if activeEventTab != 'stocks' %} tabindex="-1"{% endif %}>{{ 'stocksTab'|trans }}</button>
+        <button type="button" id="dividends-tab" role="tab" aria-selected="{{ activeEventTab == 'dividends' ? 'true' : 'false' }}" aria-controls="dividends-panel"{% if activeEventTab != 'dividends' %} tabindex="-1"{% endif %}>{{ 'dividendsTab'|trans }}</button>
+    </div>
+
+    <section id="stocks-panel" role="tabpanel" aria-labelledby="stocks-tab"{% if activeEventTab != 'stocks' %} hidden{% endif %}>
+    <h2>{{ 'yearStockEvents' | trans({'year': accounting.getDisplayedYear()}) }}</h2>
     {% if accounting.getHasPrevPage() and accounting.getPage() > 0 %}
     <a href="{{ path('stockaccounting_index') }}?year={{ accounting.getDisplayedYear() }}&page={{ accounting.getPage()-1 }}" class="actionItem">{%trans%}previousPage{%endtrans%}</a>
     {% else %}
@@ -208,5 +218,61 @@
         {% endfor %}
         </tbody>
     </table>
+    </section>
+
+    <section id="dividends-panel" role="tabpanel" aria-labelledby="dividends-tab"{% if activeEventTab != 'dividends' %} hidden{% endif %}>
+        <h2>{{ 'yearDividendEvents'|trans({'year': accounting.getDisplayedYear()}) }}</h2>
+        <table id="dividend-events">
+            <thead>
+                <tr>
+                    <th scope="col">{{ 'dateWithTZ'|trans({'timezone': timezone.getName()}) }}</th>
+                    <th scope="col">{{ 'stocks'|trans({'amount': 1}) }}</th>
+                    <th scope="col">{{ 'shares'|trans }}</th>
+                    <th scope="col">{{ 'perShare'|trans({'currency': currencysymbol}) }}</th>
+                    <th scope="col">{{ 'gross'|trans({'currency': currencysymbol}) }}</th>
+                    <th scope="col">{{ 'expenses'|trans({'currency': currencysymbol}) }} {{ currencysymbol }}</th>
+                    <th scope="col">{{ 'net'|trans({'currency': currencysymbol}) }} {{ currencysymbol }}</th>
+                    <th scope="col">{{ 'actions'|trans }}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for cashDividend in accounting.getCashDividendSummary().getDisplayedYearDividends() %}
+                    <tr>
+                        <td>{{ cashDividend.getDateTimeUtc()|date('Y M d H:i:s', timezone) }}</td>
+                        <td><a href="{{ path('stock_update', {'id': cashDividend.getStock().getId()}) }}" class="actionItem">{{ cashDividend.getStock().getId() }} - {{ cashDividend.getStock().getExchange().getCode() }}</a> {{ cashDividend.getStock().getName() }}</td>
+                        <td class="number">{{ include('reusables/format_number/transactionAmount.html.twig', {number: cashDividend.getAmount().getValue()}) }}</td>
+                        <td class="number">{{ include('reusables/format_number/decimal.html.twig', {number: cashDividend.getDividendPerShare().getValue()}) }}</td>
+                        <td class="number">{{ include('reusables/format_number/decimal.html.twig', {number: cashDividend.getTotalDividendPayment().getValue()}) }}</td>
+                        <td class="number">{{ include('reusables/format_number/decimal.html.twig', {number: cashDividend.getExpenses().getValue()}) }}</td>
+                        <td class="number">{{ include('reusables/format_number/decimal.html.twig', {number: cashDividend.getNetDividendPayment().getValue()}) }}</td>
+                        <td>
+                            <a href="{{ path('cashdividend_edit', {'id': cashDividend.getId()}) }}" class="actionItem">{{ 'editCashDividend'|trans }}</a>
+                            {{ include('stock/dividend/_delete_form.html.twig', {cashDividend: cashDividend}) }}
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr><td colspan="8">{{ 'noRecordsFound'|trans }}</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </section>
+
+    <script>
+        document.querySelectorAll('#accounting-event-tabs [role="tab"]').forEach((tab) => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('#accounting-event-tabs [role="tab"]').forEach((item) => {
+                    const selected = item === tab;
+                    item.setAttribute('aria-selected', selected ? 'true' : 'false');
+                    item.tabIndex = selected ? 0 : -1;
+                    document.getElementById(item.getAttribute('aria-controls')).hidden = !selected;
+                });
+                const selectedView = tab.id === 'dividends-tab' ? 'dividends' : 'stocks';
+                document.querySelector('#accounting-year-form input[name="view"]').value = selectedView;
+                const url = new URL(window.location.href);
+                url.searchParams.set('view', selectedView);
+                window.history.replaceState({}, '', url.toString());
+            });
+        });
+    </script>
 
 {% endblock %}
