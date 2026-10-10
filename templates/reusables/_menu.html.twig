@@ -8,7 +8,7 @@
         <li class="menuHeader">{{ 'stockinvestments'| trans }}</li>
         <li><a href="{{ path('stockportfolio_index') }}"{% if route starts with 'stockportfolio_' %} class="selected"{% endif %}>{{ 'portfolio'| trans }}</a></li>
         <li><a href="{{ path('stockaccounting_index') }}"{% if route starts with 'stockaccounting_' %} class="selected"{% endif %}>{{ 'accounting'| trans }}</a></li>
-        <li><a href="{{ path('stock_list') }}"{% if route starts with 'stock_' or route starts with 'stockoperate_' %} class="selected"{% endif %}>{{ 'stocks'|trans({'stocks': 2}) }}</a></li>
+        <li><a href="{{ path('stock_list') }}"{% if route starts with 'stock_' or route starts with 'stockoperate_' %} class="selected"{% endif %}>{{ 'stocks'|trans({'amount': 2}) }}</a></li>
         <li class="menuNoHeader"><a href="{{ path('app_logout') }}" class="logout">{{ 'logout'|trans({}, 'PhpAuthCoreBundle') }}</a></li>
     </ul>
 </nav>
