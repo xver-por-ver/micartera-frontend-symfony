@@ -21,5 +21,37 @@
     {% set currencysymbol = summary.getCurrency().symbol %}
     {% set summaryTitle = 'profitLoss' %}
     {% include 'stock/portfolio/summary.html.twig' %}
+
+    <h2>{{ 'cashDividends'|trans }}</h2>
+    <a href="{{ path('cashdividend_new', {'stock': form.vars.value.code}) }}" class="actionItem">{{ 'createCashDividend'|trans }}</a>
+    <table id="cash-dividends" class="centered">
+        <thead>
+            <tr>
+                <th scope="col">{{ 'dateWithTZ'|trans({'timezone': timezone}) }}</th>
+                <th scope="col">{{ 'shares'|trans }}</th>
+                <th scope="col">{{ 'perShare'|trans({'currency': currencysymbol}) }}</th>
+                <th scope="col">{{ 'gross'|trans({'currency': currencysymbol}) }}</th>
+                <th scope="col">{{ 'expenses'|trans({'currency': currencysymbol}) }}</th>
+                <th scope="col">{{ 'actions'|trans }}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for cashDividend in cashDividends %}
+                <tr>
+                    <td>{{ cashDividend.getDateTimeUtc()|date('Y M d H:i:s', timezone) }}</td>
+                    <td class="number">{{ include('reusables/format_number/transactionAmount.html.twig', {number: cashDividend.getAmount().getValue()}) }}</td>
+                    <td class="number">{{ include('reusables/format_number/decimal.html.twig', {number: cashDividend.getDividendPerShare().getValue()}) }}</td>
+                    <td class="number">{{ include('reusables/format_number/decimal.html.twig', {number: cashDividend.getTotalDividendPayment().getValue()}) }}</td>
+                    <td class="number">{{ include('reusables/format_number/decimal.html.twig', {number: cashDividend.getExpenses().getValue()}) }}</td>
+                    <td>
+                        <a href="{{ path('cashdividend_edit', {'id': cashDividend.getId()}) }}" class="actionItem">{{ 'editCashDividend'|trans }}</a>
+                        {{ include('stock/dividend/_delete_form.html.twig') }}
+                    </td>
+                </tr>
+            {% else %}
+                <tr><td colspan="6">{{ 'noRecordsFound'|trans }}</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
 {% endif %}
 {% endblock %}

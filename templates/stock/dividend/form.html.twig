@@ -1,0 +1,18 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {{ encore_entry_link_tags('form') }}
+{% endblock %}
+
+{% set formTitle = edit|default(false) ? 'editCashDividend' : 'createCashDividend' %}
+
+{% block title %}{{ formTitle|trans }}: {{ stockCode }}{% endblock %}
+
+{% block body %}
+    <h2>{{ formTitle|trans }}: {{ stockCode }}</h2>
+    {% if edit|default(false) %}
+        <p>{{ 'dividendRecordedOn'|trans }}: {{ recordedDate|date('Y M d H:i:s') }}</p>
+    {% endif %}
+    {% include 'reusables/_form.html.twig' %}
+{% endblock %}

@@ -46,6 +46,7 @@
                 <td>
                     {{ include('stock/_delete_form.html.twig') }}
                     <a href="{{ path('stockoperate_new', {'type': 'purchase', 'stock': stock.getId()}) }}" class="actionItem">{{ 'acquire' | trans }}</a>
+                    <a href="{{ path('cashdividend_new', {'stock': stock.getId()}) }}" class="actionItem">{{ 'createCashDividend' | trans }}</a>
                 </td>
             </tr>
         {% else %}

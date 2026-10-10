@@ -12,19 +12,15 @@
 {% endif %}
 
 
-<h2>{% if summaryTitle is defined %}{{ summaryTitle | trans }}{% else %}{{ 'summary' | trans }}{% endif %}</h2>
+<h2>{% if summaryTitle is defined %}{{ summaryTitle | trans }}{% else %}{{ 'unrealisedresults' | trans }}{% endif %}</h2>
 <table class="centered">
     <thead>
         <tr>
-            <td colspan="3" class="noBg">&nbsp;</td>
-            <th colspan="2" scope="colgroup">{{ 'unrealisedgainloss' | trans }}</th>
-        </tr>
-        <tr>
-            <th scope="col">{{ 'acquisition' | trans({'amount': 2}) }} {{ currencysymbol }}</th>
-            <th scope="col">{{ 'acquisitionFee' | trans({'amount': 2}) }} {{ currencysymbol }}</th>
-            <th scope="col">{{ 'market' | trans({'amount': 2}) }} {{ currencysymbol }}</th>
-            <th scope="col">{{ currencysymbol }}</th>
-            <th scope="col">&percnt;</th>
+            <th scope="col">{{ 'transactionShortGross' | trans({'type': 'acquisition', 'currency': currencysymbol}) }}</th>
+            <th scope="col">{{ 'expenses' | trans({'currency': currencysymbol}) }}</th>
+            <th scope="col">{{ 'market' | trans({'currency': currencysymbol}) }}</th>
+            <th scope="col">{{ 'net' | trans({'currency': currencysymbol}) }}</th>
+            <th scope="col">{{ 'net' | trans({'currency': '%'}) }}</th>
         </tr>
     </thead>
     <tbody>
