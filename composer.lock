@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "388569767fcb23a44f787ef4dccf2337",
+    "content-hash": "2c35bbc5f1bb0c854a3a732b997e5448",
     "packages": [
         {
             "name": "brick/math",
@@ -8652,16 +8652,16 @@
         },
         {
             "name": "xver/micartera-domain",
-            "version": "2.0.2",
+            "version": "3.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/xver-por-ver/micartera-domain.git",
-                "reference": "cab963d8e80afc7ae8de4356e45c1c86fd56b51b"
+                "reference": "347646d851f916cf4fad24c5a4c55850420ad1b5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/xver-por-ver/micartera-domain/zipball/cab963d8e80afc7ae8de4356e45c1c86fd56b51b",
-                "reference": "cab963d8e80afc7ae8de4356e45c1c86fd56b51b",
+                "url": "https://api.github.com/repos/xver-por-ver/micartera-domain/zipball/347646d851f916cf4fad24c5a4c55850420ad1b5",
+                "reference": "347646d851f916cf4fad24c5a4c55850420ad1b5",
                 "shasum": ""
             },
             "require": {
@@ -8697,9 +8697,9 @@
             "description": "MiCartera Domain",
             "support": {
                 "issues": "https://github.com/xver-por-ver/micartera-domain/issues",
-                "source": "https://github.com/xver-por-ver/micartera-domain/tree/2.0.2"
+                "source": "https://github.com/xver-por-ver/micartera-domain/tree/3.0.0"
             },
-            "time": "2026-10-08T14:15:11+00:00"
+            "time": "2026-10-10T19:19:04+00:00"
         },
         {
             "name": "xver/php-app-core",
