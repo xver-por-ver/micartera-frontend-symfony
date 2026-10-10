@@ -11,6 +11,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Uid\Uuid;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Xver\MiCartera\Domain\Stock\Application\Command\Dividend\CashDividendCreateCommand;
+use Xver\MiCartera\Domain\Stock\Application\Command\Dividend\CashDividendDeleteCommand;
 use Xver\MiCartera\Domain\Stock\Application\Command\Dividend\CashDividendUpdateCommand;
 use Xver\MiCartera\Domain\Stock\Domain\Dividend\CashDividendAmountException;
 use Xver\MiCartera\Domain\Stock\Domain\Dividend\CashDividendPersistenceInterface;
@@ -71,6 +72,39 @@ final class CashDividendController extends AbstractController
         }
 
         return $this->render('stock/dividend/form.html.twig', ['form' => $form, 'stockCode' => $stock]);
+    }
+
+    #[Route('/{id}', name: 'delete', methods: ['DELETE'])]
+    public function delete(
+        string $id,
+        Request $request,
+        TranslatorInterface $translator,
+        DomainExceptionTranslator $exceptionTranslator,
+        CashDividendPersistenceInterface $cashDividendPersistence
+    ): Response {
+        if (!Uuid::isValid($id)) {
+            throw $this->createNotFoundException();
+        }
+        $cashDividend = $cashDividendPersistence->getRepository()->findByIdOrThrowException(new Uuid($id));
+        /** @psalm-suppress PossiblyNullReference */
+        if ($cashDividend->getAccount()->getIdentifier() !== $this->getUser()->getUserIdentifier()) {
+            throw $this->createNotFoundException();
+        }
+
+        if (!$this->isCsrfTokenValid('delete' . $id, (string) $request->request->get('_token'))) {
+            $this->addFlash('error', $translator->trans('invalidFormToken'));
+        } else {
+            try {
+                (new CashDividendDeleteCommand($cashDividendPersistence))->invoke($id);
+                $this->addFlash('success', $translator->trans('actionCompletedSuccessfully'));
+
+                return $this->redirectToRoute('stock_update', ['id' => $cashDividend->getStock()->getId()], Response::HTTP_SEE_OTHER);
+            } catch (DomainViolationException $exception) {
+                $this->addFlash('error', $exceptionTranslator->getTranslatedException($exception, $translator)->getMessage());
+            }
+        }
+
+        return $this->redirectToRoute('stock_update', ['id' => $cashDividend->getStock()->getId()], Response::HTTP_SEE_OTHER);
     }
 
     #[Route('/{id}/edit', name: 'edit', methods: ['GET', 'POST'])]

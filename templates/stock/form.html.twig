@@ -43,7 +43,10 @@
                     <td class="number">{{ include('reusables/format_number/stock.html.twig', {number: cashDividend.getDividendPerShare().getValue()}) }}</td>
                     <td class="number">{{ include('reusables/format_number/decimal.html.twig', {number: cashDividend.getTotalDividendPayment().getValue()}) }}</td>
                     <td class="number">{{ include('reusables/format_number/decimal.html.twig', {number: cashDividend.getExpenses().getValue()}) }}</td>
-                    <td><a href="{{ path('cashdividend_edit', {'id': cashDividend.getId()}) }}" class="actionItem">{{ 'editCashDividend'|trans }}</a></td>
+                    <td>
+                        <a href="{{ path('cashdividend_edit', {'id': cashDividend.getId()}) }}" class="actionItem">{{ 'editCashDividend'|trans }}</a>
+                        {{ include('stock/dividend/_delete_form.html.twig') }}
+                    </td>
                 </tr>
             {% else %}
                 <tr><td colspan="6">{{ 'noRecordsFound'|trans }}</td></tr>

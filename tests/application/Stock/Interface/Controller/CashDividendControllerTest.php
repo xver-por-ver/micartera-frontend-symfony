@@ -68,6 +68,23 @@ class CashDividendControllerTest extends ApplicationTestCase
         self::assertSelectorTextContains('#cash-dividends tbody tr', '0.3');
         self::assertSelectorTextContains('#cash-dividends tbody tr', '0.5');
 
+        $deleteForm = $crawler->filter('#cash-dividends form.deleteForm')->form();
+        $values = $deleteForm->getValues();
+        $values['_token'] = 'invalid';
+        $deleteForm->setValues($values);
+        $this->client->submit($deleteForm);
+        self::assertResponseRedirects('/en_GB/stock/CABK', Response::HTTP_SEE_OTHER);
+        $crawler = $this->client->followRedirect();
+        self::assertSelectorTextContains('.flash-error', self::$translator->trans('invalidFormToken'));
+        self::assertSelectorExists('#cash-dividends tbody tr');
+
+        $deleteForm = $crawler->filter('#cash-dividends form.deleteForm')->form();
+        $this->client->submit($deleteForm);
+        self::assertResponseRedirects('/en_GB/stock/CABK', Response::HTTP_SEE_OTHER);
+        $crawler = $this->client->followRedirect();
+        self::assertSelectorTextContains('.flash-success', self::$translator->trans('actionCompletedSuccessfully'));
+        self::assertSelectorTextContains('#cash-dividends tbody tr', self::$translator->trans('noRecordsFound'));
+
         $crawler = $this->client->request('GET', '/en_GB/stockportfolio');
         self::assertSelectorExists('a[href="/en_GB/cashdividend/new/CABK"]');
 

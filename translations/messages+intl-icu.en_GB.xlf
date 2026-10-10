@@ -57,6 +57,10 @@
         <source>dividendRecordedOn</source>
         <target>Recorded on (UTC)</target>
       </trans-unit>
+      <trans-unit id="confirmDeleteCashDividendMsg">
+        <source>confirmDeleteCashDividendMsg</source>
+        <target>Confirm deletion of this cash dividend?</target>
+      </trans-unit>
       <trans-unit id="update">
         <source>update</source>
         <target>Update</target>
