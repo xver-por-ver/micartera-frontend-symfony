@@ -10,6 +10,7 @@ use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Translation\TranslatableMessage;
 use Xver\MiCartera\Domain\Account\Application\Query\AccountQuery;
@@ -30,8 +31,8 @@ final class CashDividendType extends AbstractType
         $identifier = $this->token->getToken()->getUser()->getUserIdentifier();
         $account = new AccountQuery($this->accountPersistence)->findByIdentifierOrThrowException($identifier);
 
-        $builder
-            ->add('datetime', DateTimeType::class, [
+        if ($options['include_datetime']) {
+            $builder->add('datetime', DateTimeType::class, [
                 'years' => range((int) date('Y') - 10, (int) date('Y')),
                 'label' => new TranslatableMessage('dateWithTZ', ['timezone' => $account->getTimeZone()->getName()]),
                 'input' => 'datetime',
@@ -39,7 +40,11 @@ final class CashDividendType extends AbstractType
                 'widget' => 'single_text',
                 'model_timezone' => $this->params->get('app.timezone'),
                 'view_timezone' => $account->getTimeZone()->getName(),
-            ])
+            ]);
+        }
+
+        $formData = is_array($options['data'] ?? null) ? $options['data'] : [];
+        $builder
             ->add('dividendPerShare', NumberType::class, [
                 'scale' => 4,
                 'rounding_mode' => \NumberFormatter::ROUND_HALFUP,
@@ -48,13 +53,22 @@ final class CashDividendType extends AbstractType
                 'label' => new TranslatableMessage('dividendPerShareWithCurrencySymbol', ['symbol' => $account->getCurrency()->getSymbol()]),
             ])
             ->add('expenses', NumberType::class, [
-                'data' => 0,
+                'data' => $formData['expenses'] ?? 0,
                 'scale' => $account->getCurrency()->getDecimals(),
                 'rounding_mode' => \NumberFormatter::ROUND_HALFUP,
                 'html5' => true,
                 'attr' => ['step' => '1e-' . $account->getCurrency()->getDecimals()],
                 'label' => new TranslatableMessage('expensesWithCurrencySymbol', ['symbol' => $account->getCurrency()->getSymbol()]),
             ])
-            ->add('cmdSubmit', SubmitType::class, ['label' => new TranslatableMessage('createCashDividend')]);
+            ->add('cmdSubmit', SubmitType::class, ['label' => new TranslatableMessage($options['submit_label'])]);
+    }
+
+    #[\Override]
+    public function configureOptions(OptionsResolver $resolver): void
+    {
+        $resolver->setDefaults([
+            'include_datetime' => true,
+            'submit_label' => 'createCashDividend',
+        ]);
     }
 }

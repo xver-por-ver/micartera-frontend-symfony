@@ -32,6 +32,7 @@
                 <th scope="col">{{ 'dividendPerShareWithCurrencySymbol'|trans({'symbol': currencysymbol}) }}</th>
                 <th scope="col">{{ 'totalDividendPayment'|trans }} {{ currencysymbol }}</th>
                 <th scope="col">{{ 'expensesWithCurrencySymbol'|trans({'symbol': currencysymbol}) }}</th>
+                <th scope="col">{{ 'actions'|trans }}</th>
             </tr>
         </thead>
         <tbody>
@@ -42,9 +43,10 @@
                     <td class="number">{{ include('reusables/format_number/stock.html.twig', {number: cashDividend.getDividendPerShare().getValue()}) }}</td>
                     <td class="number">{{ include('reusables/format_number/decimal.html.twig', {number: cashDividend.getTotalDividendPayment().getValue()}) }}</td>
                     <td class="number">{{ include('reusables/format_number/decimal.html.twig', {number: cashDividend.getExpenses().getValue()}) }}</td>
+                    <td><a href="{{ path('cashdividend_edit', {'id': cashDividend.getId()}) }}" class="actionItem">{{ 'editCashDividend'|trans }}</a></td>
                 </tr>
             {% else %}
-                <tr><td colspan="5">{{ 'noRecordsFound'|trans }}</td></tr>
+                <tr><td colspan="6">{{ 'noRecordsFound'|trans }}</td></tr>
             {% endfor %}
         </tbody>
     </table>

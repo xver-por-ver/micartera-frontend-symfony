@@ -45,6 +45,18 @@
         <source>totalDividendPayment</source>
         <target>Total payment</target>
       </trans-unit>
+      <trans-unit id="editCashDividend">
+        <source>editCashDividend</source>
+        <target>Edit dividend</target>
+      </trans-unit>
+      <trans-unit id="updateCashDividend">
+        <source>updateCashDividend</source>
+        <target>Save changes</target>
+      </trans-unit>
+      <trans-unit id="dividendRecordedOn">
+        <source>dividendRecordedOn</source>
+        <target>Recorded on (UTC)</target>
+      </trans-unit>
       <trans-unit id="update">
         <source>update</source>
         <target>Update</target>

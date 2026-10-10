@@ -53,9 +53,20 @@ class CashDividendControllerTest extends ApplicationTestCase
             self::$translator->trans('cashDividendExistsOnDateTime', [], 'MiCarteraDomain')
         );
 
-        $this->client->request('GET', '/en_GB/stock/CABK');
+        $crawler = $this->client->request('GET', '/en_GB/stock/CABK');
         self::assertSelectorTextContains('#cash-dividends tbody tr', '0.25');
         self::assertSelectorTextContains('#cash-dividends tbody tr', '200');
+
+        $crawler = $this->client->click($crawler->selectLink('Edit dividend')->link());
+        $form = $crawler->selectButton('cash_dividend_cmdSubmit')->form();
+        $this->client->submit($form, [
+            'cash_dividend[dividendPerShare]' => '0.30',
+            'cash_dividend[expenses]' => '0.50',
+        ]);
+        self::assertResponseRedirects('/en_GB/stock/CABK', Response::HTTP_SEE_OTHER);
+        $crawler = $this->client->followRedirect();
+        self::assertSelectorTextContains('#cash-dividends tbody tr', '0.3');
+        self::assertSelectorTextContains('#cash-dividends tbody tr', '0.5');
 
         $crawler = $this->client->request('GET', '/en_GB/stockportfolio');
         self::assertSelectorExists('a[href="/en_GB/cashdividend/new/CABK"]');
