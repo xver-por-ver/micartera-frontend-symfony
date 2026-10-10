@@ -21,6 +21,7 @@ use Xver\MiCartera\Domain\Stock\Domain\Transaction\AcquisitionPersistenceInterfa
 use Xver\MiCartera\Domain\Stock\Domain\Transaction\LiquidationPersistenceInterface;
 use Xver\MiCartera\Frontend\Symfony\Stock\Interface\Form\CashDividendType;
 use Xver\MiCartera\Frontend\Symfony\Stock\Interface\Form\NumericStringData;
+use Xver\PhpAppCoreBundle\Entity\Domain\EntityNotFoundException;
 use Xver\PhpAppCoreBundle\Exception\Domain\DomainExceptionTranslator;
 use Xver\PhpAppCoreBundle\Exception\Domain\DomainViolationException;
 
@@ -112,13 +113,16 @@ final class CashDividendController extends AbstractController
         string $id,
         Request $request,
         TranslatorInterface $translator,
-        DomainExceptionTranslator $exceptionTranslator,
         CashDividendPersistenceInterface $cashDividendPersistence
     ): Response {
         if (!Uuid::isValid($id)) {
             throw $this->createNotFoundException();
         }
-        $cashDividend = $cashDividendPersistence->getRepository()->findByIdOrThrowException(new Uuid($id));
+        try {
+            $cashDividend = $cashDividendPersistence->getRepository()->findByIdOrThrowException(new Uuid($id));
+        } catch (EntityNotFoundException) {
+            throw $this->createNotFoundException();
+        }
         /** @psalm-suppress PossiblyNullReference */
         if ($cashDividend->getAccount()->getIdentifier() !== $this->getUser()->getUserIdentifier()) {
             throw $this->createNotFoundException();
@@ -127,19 +131,15 @@ final class CashDividendController extends AbstractController
         if (!$this->isCsrfTokenValid('delete' . $id, (string) $request->request->get('_token'))) {
             $this->addFlash('error', $translator->trans('invalidFormToken'));
         } else {
-            try {
-                new CashDividendDeleteCommand($cashDividendPersistence)->invoke($id);
-                $this->addFlash('success', $translator->trans('actionCompletedSuccessfully'));
+            new CashDividendDeleteCommand($cashDividendPersistence)->invoke($id);
+            $this->addFlash('success', $translator->trans('actionCompletedSuccessfully'));
 
-                return $this->redirectToPreviousPage(
-                    $request,
-                    (string) $request->request->get('returnTo', ''),
-                    'stock_update',
-                    ['id' => $cashDividend->getStock()->getId()]
-                );
-            } catch (DomainViolationException $exception) {
-                $this->addFlash('error', $exceptionTranslator->getTranslatedException($exception, $translator)->getMessage());
-            }
+            return $this->redirectToPreviousPage(
+                $request,
+                (string) $request->request->get('returnTo', ''),
+                'stock_update',
+                ['id' => $cashDividend->getStock()->getId()]
+            );
         }
 
         return $this->redirectToPreviousPage(

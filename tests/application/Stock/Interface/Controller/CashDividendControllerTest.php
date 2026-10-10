@@ -196,6 +196,15 @@ class CashDividendControllerTest extends ApplicationTestCase
         self::assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
     }
 
+    public function testDeletingNonexistentDividendReturnsNotFound(): void
+    {
+        $this->client->loginUser(self::getAuthUser());
+
+        $this->client->request('DELETE', '/en_GB/cashdividend/00000000-0000-4000-8000-000000000000');
+
+        self::assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
+    }
+
     public function testRejectsInvalidDividendIdsForEditAndDelete(): void
     {
         $this->client->loginUser(self::getAuthUser());
