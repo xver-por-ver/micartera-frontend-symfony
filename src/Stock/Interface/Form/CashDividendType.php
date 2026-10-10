@@ -50,8 +50,7 @@ final class CashDividendType extends AbstractType
         } else {
             $formData = [];
         }
-        $submitLabel = $options['submit_label'];
-        assert(is_string($submitLabel));
+        $submitLabel = (string) $options['submit_label'];
         $builder
             ->add('dividendPerShare', NumberType::class, [
                 'scale' => 2,

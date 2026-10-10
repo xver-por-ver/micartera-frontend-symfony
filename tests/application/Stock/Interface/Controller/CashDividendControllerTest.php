@@ -8,6 +8,9 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\UsesClass;
 use Symfony\Component\HttpFoundation\Response;
 use Tests\application\ApplicationTestCase;
+use Xver\MiCartera\Domain\Account\Application\Query\AccountQuery;
+use Xver\MiCartera\Domain\Account\Infrastructure\Doctrine\AccountPersistence;
+use Xver\PhpAuthCoreBundle\Auth\Application\AuthProvider;
 use Xver\MiCartera\Frontend\Symfony\Stock\Interface\Controller\CashDividendController;
 use Xver\MiCartera\Frontend\Symfony\Stock\Interface\Controller\StockAccountingController;
 use Xver\MiCartera\Frontend\Symfony\Stock\Interface\Controller\StockController;
@@ -133,6 +136,64 @@ class CashDividendControllerTest extends ApplicationTestCase
 
         $this->client->request('GET', '/en_GB/stock');
         self::assertSelectorExists('a[href="/en_GB/cashdividend/new/CABK"]');
+    }
+
+    public function testCreateFallsBackForInvalidAndExternalReferers(): void
+    {
+        $this->client->loginUser(self::getAuthUser());
+
+        foreach ([
+            ['http://example.com/en_GB/stock', '-4 days'],
+            ['http://:80', '-3 days'],
+        ] as [$referer, $date]) {
+            $crawler = $this->client->request('GET', '/en_GB/stock');
+            $crawler = $this->client->click($crawler->selectLink('Record dividend')->link());
+            $form = $crawler->selectButton('cash_dividend_cmdSubmit')->form();
+            $values = $form->getValues();
+            $values['cash_dividend[refererPage]'] = $referer;
+            $form->setValues($values);
+            $this->client->submit($form, [
+                'cash_dividend[datetime]' => new \DateTime($date, new \DateTimeZone('UTC'))->format('Y-m-d H:i:s'),
+                'cash_dividend[dividendPerShare]' => '0.25',
+                'cash_dividend[expenses]' => '0',
+            ]);
+            self::assertResponseRedirects('/en_GB/stockportfolio', Response::HTTP_SEE_OTHER);
+        }
+    }
+
+    public function testCashDividendFormCanBeBuiltWithoutInitialData(): void
+    {
+        $this->client->loginUser(self::getAuthUser());
+        $form = static::getContainer()->get('form.factory')->create(CashDividendType::class);
+
+        self::assertSame('cash_dividend', $form->getName());
+    }
+
+    public function testRejectsDividendOwnedByAnotherAccount(): void
+    {
+        $this->client->loginUser(self::getAuthUser());
+        $crawler = $this->client->request('GET', '/en_GB/stock');
+        $crawler = $this->client->click($crawler->selectLink('Record dividend')->link());
+        $form = $crawler->selectButton('cash_dividend_cmdSubmit')->form();
+        $this->client->submit($form, [
+            'cash_dividend[datetime]' => new \DateTime('-3 days', new \DateTimeZone('UTC'))->format('Y-m-d H:i:s'),
+            'cash_dividend[dividendPerShare]' => '0.25',
+            'cash_dividend[expenses]' => '0',
+        ]);
+
+        $crawler = $this->client->request('GET', '/en_GB/stock/CABK');
+        $editUrl = $crawler->selectLink('Edit dividend')->link()->getUri();
+        $deleteForm = $crawler->filter('#cash-dividends form.deleteForm')->form();
+        $deleteUrl = $deleteForm->getUri();
+        $otherUser = new AuthProvider(new AccountQuery(new AccountPersistence(self::$registry)))
+            ->loadUserByIdentifier('test_other@example.com');
+        $this->client->loginUser($otherUser);
+
+        $this->client->request('GET', $editUrl);
+        self::assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
+
+        $this->client->request('DELETE', $deleteUrl);
+        self::assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
     }
 
     public function testRejectsInvalidDividendIdsForEditAndDelete(): void
