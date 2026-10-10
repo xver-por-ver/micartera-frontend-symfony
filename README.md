@@ -1,5 +1,17 @@
 [![CI Orchestrator](https://github.com/xver-por-ver/micartera-frontend-symfony/actions/workflows/ci-orchestrator.yml/badge.svg?branch=main&event=push)](https://github.com/xver-por-ver/micartera-frontend-symfony/actions/workflows/ci-orchestrator.yml)
 
+## Upgrading from 2.0.2
+
+**Back up each existing database before upgrading.** The `xver/micartera-domain` 3.0.0 upgrade renamed the initial Doctrine migration. On each existing database, update the migrations version table once, using the same environment and database configuration that you will use to run migrations:
+
+```sh
+devbox run -- bin/console doctrine:migrations:version 'DoctrineMigrations\VersionInitial' --delete
+devbox run -- bin/console doctrine:migrations:version 'DoctrineMigrations\Version20231217111100' --add
+devbox run -- bin/console doctrine:migrations:migrate
+```
+
+Do not run the version-table commands on a fresh database or on a database that already records `DoctrineMigrations\Version20231217111100` as executed. Run only the migration command for those databases.
+
 ## Continuous Integration
 
 This project uses GitHub Actions for continuous integration.
