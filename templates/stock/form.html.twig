@@ -21,5 +21,32 @@
     {% set currencysymbol = summary.getCurrency().symbol %}
     {% set summaryTitle = 'profitLoss' %}
     {% include 'stock/portfolio/summary.html.twig' %}
+
+    <h2>{{ 'cashDividends'|trans }}</h2>
+    <a href="{{ path('cashdividend_new', {'stock': form.vars.value.code}) }}" class="actionItem">{{ 'createCashDividend'|trans }}</a>
+    <table id="cash-dividends" class="centered">
+        <thead>
+            <tr>
+                <th scope="col">{{ 'dateWithTZ'|trans({'timezone': timezone}) }}</th>
+                <th scope="col">{{ 'shares'|trans }}</th>
+                <th scope="col">{{ 'dividendPerShareWithCurrencySymbol'|trans({'symbol': currencysymbol}) }}</th>
+                <th scope="col">{{ 'totalDividendPayment'|trans }} {{ currencysymbol }}</th>
+                <th scope="col">{{ 'expensesWithCurrencySymbol'|trans({'symbol': currencysymbol}) }}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for cashDividend in cashDividends %}
+                <tr>
+                    <td>{{ cashDividend.getDateTimeUtc()|date('Y M d H:i:s', timezone) }}</td>
+                    <td class="number">{{ include('reusables/format_number/transactionAmount.html.twig', {number: cashDividend.getAmount().getValue()}) }}</td>
+                    <td class="number">{{ include('reusables/format_number/stock.html.twig', {number: cashDividend.getDividendPerShare().getValue()}) }}</td>
+                    <td class="number">{{ include('reusables/format_number/decimal.html.twig', {number: cashDividend.getTotalDividendPayment().getValue()}) }}</td>
+                    <td class="number">{{ include('reusables/format_number/decimal.html.twig', {number: cashDividend.getExpenses().getValue()}) }}</td>
+                </tr>
+            {% else %}
+                <tr><td colspan="5">{{ 'noRecordsFound'|trans }}</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
 {% endif %}
 {% endblock %}

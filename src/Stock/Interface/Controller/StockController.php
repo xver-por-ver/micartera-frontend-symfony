@@ -12,6 +12,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Xver\PhpAppCoreBundle\Exception\Domain\DomainExceptionTranslator;
 use Xver\PhpAppCoreBundle\Exception\Domain\DomainViolationException;
+use Xver\MiCartera\Domain\Account\Application\Query\AccountQuery;
 use Xver\MiCartera\Domain\Account\Domain\AccountPersistenceInterface;
 use Xver\MiCartera\Domain\Exchange\Domain\Exchange;
 use Xver\MiCartera\Domain\Exchange\Domain\ExchangePersistenceInterface;
@@ -20,6 +21,7 @@ use Xver\MiCartera\Domain\Stock\Application\Command\StockDeleteCommand;
 use Xver\MiCartera\Domain\Stock\Application\Command\StockUpdateCommand;
 use Xver\MiCartera\Domain\Stock\Application\Query\Portfolio\PortfolioQuery;
 use Xver\MiCartera\Domain\Stock\Application\Query\StockQuery;
+use Xver\MiCartera\Domain\Stock\Domain\Dividend\CashDividendPersistenceInterface;
 use Xver\MiCartera\Domain\Stock\Domain\StockPersistenceInterface;
 use Xver\MiCartera\Domain\Stock\Domain\Transaction\AcquisitionPersistenceInterface;
 use Xver\MiCartera\Frontend\Symfony\Stock\Interface\Form\NumericStringData;
@@ -103,6 +105,7 @@ final class StockController extends AbstractController
         AccountPersistenceInterface $accountPersistence,
         StockPersistenceInterface $stockPersistence,
         AcquisitionPersistenceInterface $acquisitionPersistence,
+        CashDividendPersistenceInterface $cashDividendPersistence,
         NumericStringData $numericStringData
     ): RedirectResponse|Response {
         $request->isMethod('GET')
@@ -138,11 +141,16 @@ final class StockController extends AbstractController
             $userIdentifier,
             (string) $formData['code']
         );
+        $account = new AccountQuery($accountPersistence)->findByIdentifierOrThrowException($userIdentifier);
+        $stock = $stockPersistence->getRepository()->findByIdOrThrowException((string) $formData['code']);
+        $cashDividends = $cashDividendPersistence->getRepository()->findByAccountStock($account, $stock);
 
         return $this->render('stock/form.html.twig', [
             'form' => $form,
             'title' => $translator->trans('editStock'),
             'summary' => $summaryVO,
+            'cashDividends' => $cashDividends,
+            'timezone' => $account->getTimeZone()->getName(),
         ]);
     }
 

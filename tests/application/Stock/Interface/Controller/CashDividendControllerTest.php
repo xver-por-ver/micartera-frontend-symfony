@@ -13,11 +13,13 @@ use Xver\MiCartera\Frontend\Symfony\Stock\Interface\Controller\StockController;
 use Xver\MiCartera\Frontend\Symfony\Stock\Interface\Controller\StockPortfolioController;
 use Xver\MiCartera\Frontend\Symfony\Stock\Interface\Form\CashDividendType;
 use Xver\MiCartera\Frontend\Symfony\Stock\Interface\Form\NumericStringData;
+use Xver\MiCartera\Frontend\Symfony\Stock\Interface\Form\StockType;
 
 #[CoversClass(CashDividendController::class)]
 #[CoversClass(CashDividendType::class)]
 #[UsesClass(NumericStringData::class)]
 #[UsesClass(StockController::class)]
+#[UsesClass(StockType::class)]
 #[UsesClass(StockPortfolioController::class)]
 class CashDividendControllerTest extends ApplicationTestCase
 {
@@ -50,6 +52,10 @@ class CashDividendControllerTest extends ApplicationTestCase
             '.flash-error',
             self::$translator->trans('cashDividendExistsOnDateTime', [], 'MiCarteraDomain')
         );
+
+        $this->client->request('GET', '/en_GB/stock/CABK');
+        self::assertSelectorTextContains('#cash-dividends tbody tr', '0.25');
+        self::assertSelectorTextContains('#cash-dividends tbody tr', '200');
 
         $crawler = $this->client->request('GET', '/en_GB/stockportfolio');
         self::assertSelectorExists('a[href="/en_GB/cashdividend/new/CABK"]');

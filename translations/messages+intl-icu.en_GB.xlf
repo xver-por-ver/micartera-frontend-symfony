@@ -37,6 +37,14 @@
         <source>createCashDividend</source>
         <target>Record dividend</target>
       </trans-unit>
+      <trans-unit id="cashDividends">
+        <source>cashDividends</source>
+        <target>Cash dividends</target>
+      </trans-unit>
+      <trans-unit id="totalDividendPayment">
+        <source>totalDividendPayment</source>
+        <target>Total payment</target>
+      </trans-unit>
       <trans-unit id="update">
         <source>update</source>
         <target>Update</target>
