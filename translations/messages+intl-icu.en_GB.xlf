@@ -41,6 +41,30 @@
         <source>cashDividends</source>
         <target>Cash dividends</target>
       </trans-unit>
+      <trans-unit id="cashDividendSummary">
+        <source>cashDividendSummary</source>
+        <target>Cash dividend summary</target>
+      </trans-unit>
+      <trans-unit id="stockRealizations">
+        <source>stockRealizations</source>
+        <target>Stock realizations</target>
+      </trans-unit>
+      <trans-unit id="period">
+        <source>period</source>
+        <target>Period</target>
+      </trans-unit>
+      <trans-unit id="gross">
+        <source>gross</source>
+        <target>Gross {currency}</target>
+      </trans-unit>
+      <trans-unit id="net">
+        <source>net</source>
+        <target>Net {currency}</target>
+      </trans-unit>
+      <trans-unit id="netResult">
+        <source>netResult</source>
+        <target>Net Result {currency}</target>
+      </trans-unit>
       <trans-unit id="totalDividendPayment">
         <source>totalDividendPayment</source>
         <target>Total payment</target>
@@ -124,7 +148,15 @@
       </trans-unit>
       <trans-unit id="stocks">
         <source>stocks</source>
-        <target>{stocks, plural, one {Stock} other {Stocks}}</target>
+        <target>{amount, plural, one {Stock} other {Stocks}}</target>
+      </trans-unit>
+      <trans-unit id="realizedHoldingDays">
+        <source>realizedHoldingDays</source>
+        <target>Realized Holding Days</target>
+      </trans-unit>
+      <trans-unit id="unrealizedHoldingDays">
+        <source>unrealizedHoldingDays</source>
+        <target>Unrealized Holding Days</target>
       </trans-unit>
       <trans-unit id="operationsbatchimport">
         <source>operationsbatchimport</source>
@@ -156,11 +188,11 @@
       </trans-unit>
       <trans-unit id="market">
         <source>market</source>
-        <target>Market</target>
+        <target>Market {currency}</target>
       </trans-unit>
-      <trans-unit id="unrealisedgainloss">
-        <source>unrealisedgainloss</source>
-        <target>Unrealised Gain/Loss</target>
+      <trans-unit id="unrealisedresults">
+        <source>unrealisedresults</source>
+        <target>Unrealised Results</target>
       </trans-unit>
       <trans-unit id="stockportfolio">
         <source>stockportfolio</source>
@@ -170,9 +202,13 @@
         <source>price</source>
         <target>Price</target>
       </trans-unit>
+      <trans-unit id="perShare">
+        <source>perShare</source>
+        <target>Per Share</target>
+      </trans-unit>
       <trans-unit id="expenses">
         <source>expenses</source>
-        <target>Expenses</target>
+        <target>Expenses {currency}</target>
       </trans-unit>      
       <trans-unit id="actions">
         <source>actions</source>
@@ -202,13 +238,12 @@
         <source>stockaccounting</source>
         <target>stock accounting</target>
       </trans-unit>
-      <trans-unit id="liquidationDateTime">
-        <source>liquidationDateTime</source>
-        <target><![CDATA[Liquidation Date & Time]]></target>
-      </trans-unit>
-      <trans-unit id="acquisitionDateTime">
-        <source>acquisitionDateTime</source>
-        <target><![CDATA[Acquisition Date & Time]]></target>
+      <trans-unit id="transactionShortDate">
+        <source>transactionShortDate</source>
+        <target>{type, select,
+          acquisition   {Acq. date}
+          other         {Liq. date}
+        }</target>
       </trans-unit>
       <trans-unit id="unitshareprice">
         <source>unitshareprice</source>
@@ -238,6 +273,20 @@
         <source>liquidation</source>
         <target>{amount, plural, one {Liquidation} other {Liquidations}}</target>
       </trans-unit>
+      <trans-unit id="transactionShortGross">
+        <source>transactionShortGross</source>
+        <target>{type, select,
+          acquisition   {Acq. Gross {currency}}
+          other         {Liq. Gross {currency}}
+        }</target>
+      </trans-unit>
+      <trans-unit id="transactionShortExpenses">
+        <source>transactionShortExpenses</source>
+        <target>{type, select,
+          acquisition   {Acq. Expenses {currency}}
+          other         {Liq. Expenses {currency}}
+        }</target>
+      </trans-unit>
       <trans-unit id="confirmDeleteTransactionSellMsg">
         <source>confirmDeleteTransactionSellMsg</source>
         <target>Confirm deletion of the Shares Liquidation Transaction associted to this accounting movement?</target>
@@ -254,9 +303,9 @@
         <source>allTime</source>
         <target>All Time</target>
       </trans-unit>
-      <trans-unit id="fiscalYear">
-        <source>fiscalYear</source>
-        <target>Fiscal year</target>
+      <trans-unit id="year">
+        <source>year</source>
+        <target>Year</target>
       </trans-unit>
       <trans-unit id="acquire">
         <source>acquire</source>

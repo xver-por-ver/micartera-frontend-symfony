@@ -6,10 +6,10 @@
     {{ encore_entry_link_tags('table') }}
 {% endblock %}
 
-{% block title %}{{ 'stockaccounting'|trans|capitalize }}{% endblock %}
+{% block title %}{{ 'accounting'|trans|capitalize }}{% endblock %}
 
 {% block body %}
-    <h1>{{ 'stockaccounting'|trans|capitalize }}</h1>
+    <h1>{{ 'accounting'|trans|capitalize }}</h1>
 
     {% set timezone =  accounting.getAccount().getTimeZone() %}
     {% set currencysymbol = accounting.getAccount().getCurrency().getSymbol() %}
@@ -26,6 +26,12 @@
         {% set yearPercentArrow = "M20 12l-1.41-1.41L13 16.17V4h-2v12.17l-5.58-5.59L4 12l8 8 8-8z" %}
     {% endif %}
     {% set totalProfitPrice = accounting.getSummary().getAllTimeProfitPrice().getValue() %}
+    {% set allTimeCombinedNetResult = accounting.getAllTimeCombinedNetResult().getValue() %}
+    {% set displayedYearCombinedNetResult = accounting.getDisplayedYearCombinedNetResult().getValue() %}
+    {% set allTimeCombinedStyle = allTimeCombinedNetResult >= 0 ? 'positiveValue' : 'negativeValue' %}
+    {% set allTimeCombinedSign = allTimeCombinedNetResult >= 0 ? '+' : '' %}
+    {% set displayedYearCombinedStyle = displayedYearCombinedNetResult >= 0 ? 'positiveValue' : 'negativeValue' %}
+    {% set displayedYearCombinedSign = displayedYearCombinedNetResult >= 0 ? '+' : '' %}
     {% if totalProfitPrice >= 0 %}
         {% set totalPercentStyle = "positivePercent" %}
         {% set totalValueStyle = "positiveValue" %}
@@ -39,21 +45,26 @@
     {% endif %}
 
     <h2>{{ 'summary' | trans }}</h2>
-    <table class="centered">
+    <table id="stock-accounting-summary" class="centered">
         <thead>
             <tr>
-                <td colspan="3" scope="colgroup" class="noBg">&nbsp;</td>
-                <th colspan="2" scope="colgroup">{{ 'expenses' | trans }} {{ currencysymbol }}</th>
-                <th colspan="2" scope="colgroup">{{ 'gainLoss' | trans }}</th>
+                <td class="noBg">&nbsp;</td>
+                <th colspan="6" scope="colgroup">{{ 'stockRealizations'|trans }} {{ currencysymbol }}</th>
+                <th colspan="3" scope="colgroup">{{ 'cashDividends'|trans }} {{ currencysymbol }}</th>
+                <td class="noBg">&nbsp;</th>
             </tr>
             <tr>
                 <td class="noBg">&nbsp;</td>
-                <th scope="col">{{ 'acquisition' | trans({'amount': 2}) }} {{ currencysymbol }}</th>
-                <th scope="col">{{ 'liquidation' | trans({'amount': 2}) }} {{ currencysymbol }}</th>
-                <th scope="col">{{ 'acquisition' | trans({'amount': 1}) }}</th>
-                <th scope="col">{{ 'liquidation' | trans({'amount': 1}) }}</th>
-                <th scope="col">{{ currencysymbol }}</th>
-                <th scope="col">&percnt;</th>
+                <th scope="col">{{ 'transactionShortGross' | trans({'type': 'acquisition', 'currency': ''}) }}</th>
+                <th scope="col">{{ 'transactionShortGross' | trans({'type': 'liquidation', 'currency': ''}) }}</th>
+                <th scope="col">{{ 'transactionShortExpenses' | trans({'type': 'acquisition', 'currency': ''}) }}</th>
+                <th scope="col">{{ 'transactionShortExpenses' | trans({'type': 'acquisition', 'currency': ''}) }}</th>
+                <th scope="col">{{ 'net' | trans({'currency': ''}) }}</th>
+                <th scope="col">{{ 'net' | trans({'currency': '%'}) }}</th>
+                <th scope="col">{{ 'gross'|trans({'currency': ''}) }}</th>
+                <th scope="col">{{ 'expenses'|trans({'currency': ''}) }}</th>
+                <th scope="col">{{ 'net'|trans({'currency': ''}) }} </th>
+                <th scope="col">{{ 'netResult'|trans({'currency': currencysymbol}) }}</th>
             </tr>
         </thead>
         <tbody>
@@ -70,14 +81,18 @@
                         <path d="{{ totalPercentArrow }}"></path>
                     </svg>
                 </td>
+                <td class="number">{{ include('reusables/format_number/decimal.html.twig', {number: accounting.getCashDividendSummary().getAllTimeGross().getValue()}) }}</td>
+                <td class="number">{{ include('reusables/format_number/decimal.html.twig', {number: accounting.getCashDividendSummary().getAllTimeExpenses().getValue()}) }}</td>
+                <td class="number">{{ include('reusables/format_number/decimal.html.twig', {number: accounting.getCashDividendSummary().getAllTimeNet().getValue()}) }}</td>
+                <td class="number {{ allTimeCombinedStyle }}">{{ allTimeCombinedSign }}{{ include('reusables/format_number/decimal.html.twig', {number: allTimeCombinedNetResult}) }}</td>
             </tr>
             <tr>
                 <td>
-                    {{ 'fiscalYear' | trans }}
-                    <select onchange="document.location.href='?year='+this.value;">
-                        {% for year in accounting.getSummary().getYearFirstLiquidation()..accounting.getCurrentYear() %}
-                        <option value="{{ year }}"{% if accounting.getDisplayedYear() == year %} selected="selected"{% endif %}>{{ year }}</option>
-                        {% endfor%}
+                    <label for="accounting-year">{{ 'year'|trans }}</label>
+                    <select id="accounting-year" name="year" onchange="document.location.href='?year='+this.value;">
+                        {% for year in accounting.getYearFirstOperation()..accounting.getCurrentYear() %}
+                            <option value="{{ year }}"{% if accounting.getDisplayedYear() == year %} selected="selected"{% endif %}>{{ year }}</option>
+                        {% endfor %}
                     </select>
                 </td>
                 <td class="number">{{ include('reusables/format_number/decimal.html.twig', {number: accounting.getSummary().getDisplayedYearAcquisitionsPrice().getValue()}) }}</td>
@@ -91,10 +106,15 @@
                         <path d="{{ yearPercentArrow }}"></path>
                     </svg>
                 </td>
+                <td class="number">{{ include('reusables/format_number/decimal.html.twig', {number: accounting.getCashDividendSummary().getDisplayedYearGross().getValue()}) }}</td>
+                <td class="number">{{ include('reusables/format_number/decimal.html.twig', {number: accounting.getCashDividendSummary().getDisplayedYearExpenses().getValue()}) }}</td>
+                <td class="number">{{ include('reusables/format_number/decimal.html.twig', {number: accounting.getCashDividendSummary().getDisplayedYearNet().getValue()}) }}</td>
+                <td class="number {{ displayedYearCombinedStyle }}">{{ displayedYearCombinedSign }}{{ include('reusables/format_number/decimal.html.twig', {number: displayedYearCombinedNetResult}) }}</td>
             </tr>
         </tbody>
     </table>
-    
+
+
     <h2>{{ 'detail' | trans }} {{ accounting.getDisplayedYear() }}</h2>
     {% if accounting.getHasPrevPage() and accounting.getPage() > 0 %}
     <a href="{{ path('stockaccounting_index') }}?year={{ accounting.getDisplayedYear() }}&page={{ accounting.getPage()-1 }}" class="actionItem">{%trans%}previousPage{%endtrans%}</a>
@@ -110,10 +130,9 @@
         <thead>
             <tr>
                 <td colspan="5" class="noBg">&nbsp;</td>
-                <th colspan="2" scope="colgroup">{{ 'unitshareprice'| trans }} {{ currencysymbol }}</th>
-                <th colspan="2" scope="colgroup">{{ 'totalsharesprice'| trans }} {{ currencysymbol }}</th>
-                <th colspan="2" scope="colgroup">{{ 'expenses'| trans({'amount': 2}) }} {{ currencysymbol }}</th>
-                <th colspan="2" scope="colgroup">{{ 'gainLoss'| trans }}</th>
+                <th colspan="3" scope="colgroup">{{ 'acquisition'| trans({'amount': 2}) }} {{ currencysymbol }}</th>
+                <th colspan="3" scope="colgroup">{{ 'liquidation'| trans({'amount': 2}) }} {{ currencysymbol }}</th>
+                <td colspan="2" class="noBg">&nbsp;</td>
                 <td class="noBg">&nbsp;</td>
             </tr>
             <tr>
@@ -124,21 +143,21 @@
                                 <path d="M20 12l-1.41-1.41L13 16.17V4h-2v12.17l-5.58-5.59L4 12l8 8 8-8z"></path>
                             </svg>
                         </span>
-                        <span>{{ 'acquisitionDateTime' | trans }}<br />({{ timezone.getName() }})</span>
+                        <span>{{ 'transactionShortDate' | trans({'type': ''}) }}</span>
                     </div>
                 </th>
-                <th scope="col">{{ 'liquidationDateTime' | trans }}<br />({{ timezone.getName() }})</th>
-                <th scope="col">{{ 'symbol'| trans }}</th>
-                <th scope="col">{{ 'name'| trans }}</th>
+                <th scope="col">{{ 'transactionShortDate' | trans({'type': 'acquisition'}) }}</th>
+                <th scope="col">{{ 'realizedHoldingDays'| trans }}</th>
+                <th scope="col">{{ 'stocks'| trans({'amount': 1}) }}</th>
                 <th scope="col">{{ 'shares'| trans }}</th>
-                <th scope="col">{{ 'acquisition' | trans({'amount': 1}) }}</th>
-                <th scope="col">{{ 'liquidation' | trans({'amount': 1}) }}</th>
-                <th scope="col">{{ 'acquisition' | trans({'amount': 1}) }}</th>
-                <th scope="col">{{ 'liquidation' | trans({'amount': 1}) }}</th>
-                <th scope="col">{{ 'acquisition' | trans({'amount': 1}) }}</th>
-                <th scope="col">{{ 'liquidation' | trans({'amount': 1}) }}</th>
-                <th scope="col">{{ currencysymbol }}</th>
-                <th scope="col">&percnt;</th>
+                <th scope="col">{{ 'perShare' | trans }}</th>
+                <th scope="col">{{ 'gross' | trans({'currency': ''}) }}</th>
+                <th scope="col">{{ 'expenses' | trans({'currency': ''}) }}</th>
+                <th scope="col">{{ 'perShare' | trans }}</th>
+                <th scope="col">{{ 'gross' | trans({'currency': ''}) }}</th>
+                <th scope="col">{{ 'expenses' | trans({'currency': ''}) }}</th>
+                <th scope="col">{{ 'net' | trans({'currency': currencysymbol}) }}</th>
+                <th scope="col">{{ 'net' | trans({'currency': '%'}) }}</th>
                 <th scope="col">{{ 'actions'| trans }}</th>
             </tr>
         </thead>
@@ -156,16 +175,18 @@
                     {% set valueSign = "" %}
                     {% set percentArrow = "M20 12l-1.41-1.41L13 16.17V4h-2v12.17l-5.58-5.59L4 12l8 8 8-8z" %}
                 {% endif %}
+                <td>{{ accountingMovement.getLiquidation().datetimeutc | date('M d H:i:s', timezone) }}</td>
                 <td>{{ accountingMovement.getAcquisition().datetimeutc | date('Y M d H:i:s', timezone) }}</td>
-                <td>{{ accountingMovement.getLiquidation().datetimeutc | date('Y M d H:i:s', timezone) }}</td>
-                <td><a href="{{ path('stock_update', {'id': accountingMovement.getLiquidation().getStock().getId()}) }}" class="actionItem">{{ accountingMovement.getLiquidation().getStock().getId() }} - {{ accountingMovement.getLiquidation().getStock().getExchange.getCode() }}</a></td>
-                <td>{{ accountingMovement.getLiquidation().getStock().getName() }}</td>
+                <td class="number">{{ date(accountingMovement.getLiquidation().datetimeutc).diff(date(accountingMovement.getAcquisition().datetimeutc)).days }}</td>
+                <td>
+                    <a href="{{ path('stock_update', {'id': accountingMovement.getLiquidation().getStock().getId()}) }}" class="actionItem">{{ accountingMovement.getLiquidation().getStock().getId() }} - {{ accountingMovement.getLiquidation().getStock().getExchange.getCode() }}</a> {{ accountingMovement.getLiquidation().getStock().getName() }}
+                </td>
                 <td class="number">{{ include('reusables/format_number/transactionAmount.html.twig', {number: accountingMovement.getAmount().getValue()}) }}</td>
                 <td class="number">{{ include('reusables/format_number/stock.html.twig', {number: accountingMovement.getAcquisition().getPrice().getValue()}) }}</td>
-                <td class="number">{{ include('reusables/format_number/stock.html.twig', {number: accountingMovement.getLiquidation().getPrice().getValue()}) }}</td>
                 <td class="number">{{ include('reusables/format_number/stock.html.twig', {number: accounting.getMovementAcquisitionPrice(loop.index0).getValue()}) }}</td>
-                <td class="number">{{ include('reusables/format_number/stock.html.twig', {number: accounting.getMovementLiquidationPrice(loop.index0).getValue()}) }}</td>
                 <td class="number">{{ include('reusables/format_number/decimal.html.twig', {number: accounting.getMovementAcquisitionExpense(loop.index0).getValue()}) }}</td>
+                <td class="number">{{ include('reusables/format_number/stock.html.twig', {number: accountingMovement.getLiquidation().getPrice().getValue()}) }}</td>                
+                <td class="number">{{ include('reusables/format_number/stock.html.twig', {number: accounting.getMovementLiquidationPrice(loop.index0).getValue()}) }}</td>
                 <td class="number">{{ include('reusables/format_number/decimal.html.twig', {number: accounting.getMovementLiquidationExpense(loop.index0).getValue()}) }}</td>
                 <td class="number {{ valueStyle }}">
                     {{ valueSign }}{{ include('reusables/format_number/decimal.html.twig', {number: accounting.getMovementProfitPrice(loop.index0).getValue()}) }}

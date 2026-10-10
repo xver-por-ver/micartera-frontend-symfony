@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Xver\MiCartera\Domain\Account\Domain\AccountPersistenceInterface;
 use Xver\MiCartera\Domain\Stock\Application\Query\Transaction\Accounting\AccountingQuery;
+use Xver\MiCartera\Domain\Stock\Domain\Dividend\CashDividendPersistenceInterface;
 use Xver\MiCartera\Domain\Stock\Domain\Transaction\Accounting\MovementPersistenceInterface;
 
 #[Route('/{_locale<%app.locales%>}/stockaccounting')]
@@ -19,11 +20,12 @@ final class StockAccountingController extends AbstractController
     public function index(
         Request $request,
         AccountPersistenceInterface $accountPersistence,
-        MovementPersistenceInterface $movementPersistence
+        MovementPersistenceInterface $movementPersistence,
+        CashDividendPersistenceInterface $cashDividendPersistence
     ): Response {
         /** @psalm-suppress PossiblyNullReference */
         $userIdentifier = $this->getUser()->getUserIdentifier();
-        $query = new AccountingQuery($accountPersistence, $movementPersistence);
+        $query = new AccountingQuery($accountPersistence, $movementPersistence, $cashDividendPersistence);
         $accountingDTO = $query->byAccountYear(
             $userIdentifier,
             false === is_null($request->query->get('year')) ? (int) $request->query->get('year') : null,

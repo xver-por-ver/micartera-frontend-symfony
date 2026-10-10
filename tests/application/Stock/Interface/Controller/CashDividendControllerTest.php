@@ -9,6 +9,7 @@ use PHPUnit\Framework\Attributes\UsesClass;
 use Symfony\Component\HttpFoundation\Response;
 use Tests\application\ApplicationTestCase;
 use Xver\MiCartera\Frontend\Symfony\Stock\Interface\Controller\CashDividendController;
+use Xver\MiCartera\Frontend\Symfony\Stock\Interface\Controller\StockAccountingController;
 use Xver\MiCartera\Frontend\Symfony\Stock\Interface\Controller\StockController;
 use Xver\MiCartera\Frontend\Symfony\Stock\Interface\Controller\StockPortfolioController;
 use Xver\MiCartera\Frontend\Symfony\Stock\Interface\Form\CashDividendType;
@@ -18,6 +19,7 @@ use Xver\MiCartera\Frontend\Symfony\Stock\Interface\Form\StockType;
 #[CoversClass(CashDividendController::class)]
 #[CoversClass(CashDividendType::class)]
 #[UsesClass(NumericStringData::class)]
+#[UsesClass(StockAccountingController::class)]
 #[UsesClass(StockController::class)]
 #[UsesClass(StockType::class)]
 #[UsesClass(StockPortfolioController::class)]
@@ -69,6 +71,13 @@ class CashDividendControllerTest extends ApplicationTestCase
         self::assertSelectorTextContains('#cash-dividends tbody tr', '0.3');
         self::assertSelectorTextContains('#cash-dividends tbody tr', '0.5');
 
+        $this->client->request('GET', '/en_GB/stockaccounting');
+        self::assertSelectorTextContains('#stock-accounting-summary', '60');
+        self::assertSelectorTextContains('#stock-accounting-summary', '0.5');
+        self::assertSelectorTextContains('#stock-accounting-summary', '59.5');
+        self::assertSelectorExists('#accounting-year');
+
+        $crawler = $this->client->request('GET', '/en_GB/stock/CABK');
         $deleteForm = $crawler->filter('#cash-dividends form.deleteForm')->form();
         $values = $deleteForm->getValues();
         $values['_token'] = 'invalid';
