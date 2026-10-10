@@ -44,7 +44,14 @@ final class CashDividendType extends AbstractType
             ]);
         }
 
-        $formData = is_array($options['data'] ?? null) ? $options['data'] : [];
+        if (isset($options['data']) && is_array($options['data'])) {
+            /** @var array<string, mixed> $formData */
+            $formData = $options['data'];
+        } else {
+            $formData = [];
+        }
+        $submitLabel = $options['submit_label'];
+        assert(is_string($submitLabel));
         $builder
             ->add('dividendPerShare', NumberType::class, [
                 'scale' => 2,
@@ -62,7 +69,7 @@ final class CashDividendType extends AbstractType
                 'label' => new TranslatableMessage('expensesWithCurrencySymbol', ['symbol' => $account->getCurrency()->getSymbol()]),
             ])
             ->add('refererPage', HiddenType::class)
-            ->add('cmdSubmit', SubmitType::class, ['label' => new TranslatableMessage($options['submit_label'])]);
+            ->add('cmdSubmit', SubmitType::class, ['label' => new TranslatableMessage($submitLabel)]);
     }
 
     #[\Override]
@@ -72,5 +79,7 @@ final class CashDividendType extends AbstractType
             'include_datetime' => true,
             'submit_label' => 'createCashDividend',
         ]);
+        $resolver->setAllowedTypes('include_datetime', 'bool');
+        $resolver->setAllowedTypes('submit_label', 'string');
     }
 }

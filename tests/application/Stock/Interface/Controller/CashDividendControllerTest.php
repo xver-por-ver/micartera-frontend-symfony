@@ -71,6 +71,15 @@ class CashDividendControllerTest extends ApplicationTestCase
         self::assertSelectorTextContains('#cash-dividends tbody tr', '0.3');
         self::assertSelectorTextContains('#cash-dividends tbody tr', '0.5');
 
+        $crawler = $this->client->click($crawler->selectLink('Edit dividend')->link());
+        $invalidEditForm = $crawler->selectButton('cash_dividend_cmdSubmit')->form();
+        $this->client->submit($invalidEditForm, [
+            'cash_dividend[dividendPerShare]' => '0.30',
+            'cash_dividend[expenses]' => '-0.50',
+        ]);
+        self::assertResponseIsSuccessful();
+        self::assertSelectorExists('.flash-error');
+
         $crawler = $this->client->request('GET', '/en_GB/stockaccounting');
         self::assertSelectorTextContains('#stock-accounting-summary', '60');
         self::assertSelectorTextContains('#stock-accounting-summary', '0.5');
@@ -124,6 +133,17 @@ class CashDividendControllerTest extends ApplicationTestCase
 
         $this->client->request('GET', '/en_GB/stock');
         self::assertSelectorExists('a[href="/en_GB/cashdividend/new/CABK"]');
+    }
+
+    public function testRejectsInvalidDividendIdsForEditAndDelete(): void
+    {
+        $this->client->loginUser(self::getAuthUser());
+
+        $this->client->request('GET', '/en_GB/cashdividend/not-a-uuid/edit');
+        self::assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
+
+        $this->client->request('DELETE', '/en_GB/cashdividend/not-a-uuid');
+        self::assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
     }
 
     public function testShowsHelpfulErrorWhenAccountHadNoHoldingOnDividendDate(): void
