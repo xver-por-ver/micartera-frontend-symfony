@@ -1,9 +1,9 @@
 {% set route = app.request.attributes.get('_route') %}
 
-<button class="navMenuOpen fa-solid fa-bars"></button>
-<button class="navMenuClose fa-solid fa-close hide"></button>
+<button class="navMenuOpen fa-solid fa-bars" aria-label="Open navigation" aria-expanded="false" aria-controls="primary-navigation"></button>
+<button class="navMenuClose fa-solid fa-close hide" aria-label="Close navigation"></button>
 <div class="navMenuBg hide"></div>
-<nav class="navMenu hide">
+<nav class="navMenu hide" id="primary-navigation" aria-label="Main navigation">
     <ul class="items">
         <li class="menuHeader">{{ 'stockinvestments'| trans }}</li>
         <li><a href="{{ path('stockportfolio_index') }}"{% if route starts with 'stockportfolio_' %} class="selected"{% endif %}>{{ 'portfolio'| trans }}</a></li>
