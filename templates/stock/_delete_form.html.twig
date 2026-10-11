@@ -1,5 +1,5 @@
 <form method="post" action="{{ path('stock_delete', {'id': stock.getId() }) }}" onsubmit="return confirm('{{ 'confirmDeleteMsg'|trans }}');" class="deleteForm">
     <input type="hidden" name="_method" value="DELETE" />
     <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ stock.getId()) }}" />
-    <button id="cmdDelete_{{ stock.getId() }}" name="cmdDelete_{{ stock.getId() }}">{{ 'delete'|trans }}</button>
+    <button id="cmdDelete_{{ buttonIdPrefix|default('') }}{{ stock.getId() }}" name="cmdDelete_{{ buttonIdPrefix|default('') }}{{ stock.getId() }}">{{ 'delete'|trans }}</button>
 </form>

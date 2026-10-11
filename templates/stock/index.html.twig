@@ -26,7 +26,28 @@
     {% else %}
     <span class="disabledItem">{{ 'nextPage' | trans }}</span>
     {% endif %}
-    <table aria-describedby="listocks">
+    <div class="stockCards" aria-label="{{ 'stocks'|trans({'amount': 2}) }}">
+        {% for stock in stocks.getCollection().toArray() %}
+            <article class="stockCard">
+                <div class="stockCardTop">
+                    <div>
+                        <a href="{{ path('stock_update', {'id': stock.getId()}) }}" class="portfolioStock">{{ stock.getId() }} - {{ stock.getExchange.getCode() }}</a>
+                        <div class="portfolioCompany">{{ stock.name }}</div>
+                    </div>
+                    <strong class="stockPrice">{{ stock.price.value }} {{ currencySymbol }}</strong>
+                </div>
+                <div class="stockExchange">{{ stock.getExchange.getCode() }} - {{ stock.getExchange.getName() }}</div>
+                <div class="portfolioCardActions">
+                    {{ include('stock/_delete_form.html.twig', {stock: stock, buttonIdPrefix: 'mobile_'}) }}
+                    <a href="{{ path('stockoperate_new', {'type': 'acquire', 'stock': stock.getId()}) }}" class="actionItem">{{ 'acquire'|trans }}</a>
+                    <a href="{{ path('cashdividend_new', {'stock': stock.getId()}) }}" class="actionItem">{{ 'createCashDividend'|trans }}</a>
+                </div>
+            </article>
+        {% else %}
+            <p>{{ 'noRecordsFound'|trans }}</p>
+        {% endfor %}
+    </div>
+    <table class="stockListTable" aria-describedby="listocks">
         <thead>
             <tr>
                 <th scope="col">{{ 'code' | trans }}</th>

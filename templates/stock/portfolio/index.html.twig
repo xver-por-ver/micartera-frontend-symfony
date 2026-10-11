@@ -56,9 +56,9 @@
                         </dl>
                     </section>
                     <section class="portfolioDetailGroup">
-                        <h4>{{ 'currentValuation'|trans }}</h4>
+                        <h4>{{ 'market'|trans({'currency': ''}) }}</h4>
                         <dl class="portfolioDetails">
-                            <div><dt>{{ 'perShare'|trans({'currency': ''}) }} · {{ 'market'|trans({'amount': 1, 'currency': ''}) }}</dt><dd>{{ include('reusables/format_number/stock.html.twig', {number: portfolioPosition.stock.price.value}) }} {{ currencysymbol }}</dd></div>
+                            <div><dt>{{ 'perShare'|trans({'currency': ''}) }}</dt><dd>{{ include('reusables/format_number/stock.html.twig', {number: portfolioPosition.stock.price.value}) }} {{ currencysymbol }}</dd></div>
                             <div><dt>{{ 'gross'|trans({'currency': ''}) }}</dt><dd>{{ include('reusables/format_number/stock.html.twig', {number: portfolio.getPositionMarketPrice(loop.index0).getValue()}) }} {{ currencysymbol }}</dd></div>
                         </dl>
                     </section>
