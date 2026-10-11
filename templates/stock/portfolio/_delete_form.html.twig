@@ -1,4 +1,4 @@
-<form method="post" action="{{ path('stockoperate_delete', {'type': 'purchase'}) }}" onsubmit="return confirm('{{ 'confirmDeleteTransactionBuyMsg'|trans }}');" class="deleteForm">
+<form method="post" action="{{ path('stockoperate_delete', {'type': 'acquire'}) }}" onsubmit="return confirm('{{ 'confirmAcquisitionRemoval'|trans }}');" class="deleteForm">
     <input type="hidden" name="_method" value="DELETE" />
     <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ portfolioPosition.getId()) }}" />
     <input type="hidden" name="id" value="{{ portfolioPosition.getId() }}" />

@@ -11,8 +11,5 @@
 
 {% block body %}
     <h2>{{ formTitle|trans }}: {{ stockCode }}</h2>
-    {% if edit|default(false) %}
-        <p>{{ 'dividendRecordedOn'|trans }}: {{ recordedDate|date('Y M d H:i:s') }}</p>
-    {% endif %}
     {% include 'reusables/_form.html.twig' %}
 {% endblock %}

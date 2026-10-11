@@ -1,4 +1,4 @@
-<form method="post" action="{{ path('stockoperate_delete', {'type': 'sell'}) }}" onsubmit="return confirm('{{ 'confirmDeleteTransactionSellMsg'|trans }}');" class="deleteForm">
+<form method="post" action="{{ path('stockoperate_delete', {'type': 'liquidate'}) }}" onsubmit="return confirm('{{ 'confirmAccountingMovementRemoval'|trans }}');" class="deleteForm">
     <input type="hidden" name="_method" value="DELETE" />
     <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ accountingMovement.getLiquidation().getId()) }}" />
     <input type="hidden" name="id" value="{{ accountingMovement.getLiquidation().getId() }}" />

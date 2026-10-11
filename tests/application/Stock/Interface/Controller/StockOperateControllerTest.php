@@ -128,7 +128,7 @@ class StockOperateControllerTest extends ApplicationTestCase
     public function testAcquisition(): void
     {
         $this->client->loginUser(self::getAuthUser());
-        $crawler = $this->client->request('GET', '/en_GB/stockoperate/purchase/SAN');
+        $crawler = $this->client->request('GET', '/en_GB/stockoperate/acquire/SAN');
 
         // select the button
         $buttonCrawlerNode = $crawler->selectButton('stock_operate_cmdSubmit');
@@ -171,7 +171,7 @@ class StockOperateControllerTest extends ApplicationTestCase
     public function testLiquidation(): void
     {
         $this->client->loginUser(self::getAuthUser());
-        $crawler = $this->client->request('GET', '/en_GB/stockoperate/sell/SAN');
+        $crawler = $this->client->request('GET', '/en_GB/stockoperate/liquidate/SAN');
 
         // select the button
         $buttonCrawlerNode = $crawler->selectButton('stock_operate_cmdSubmit');

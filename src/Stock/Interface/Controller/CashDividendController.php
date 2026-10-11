@@ -174,7 +174,7 @@ final class CashDividendController extends AbstractController
             'refererPage' => $request->headers->get('referer', ''),
         ], [
             'include_datetime' => false,
-            'submit_label' => 'updateCashDividend',
+            'submit_label' => 'update',
         ]);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {

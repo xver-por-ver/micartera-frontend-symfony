@@ -41,10 +41,6 @@
         <source>cashDividends</source>
         <target>Cash dividends</target>
       </trans-unit>
-      <trans-unit id="cashDividendSummary">
-        <source>cashDividendSummary</source>
-        <target>Cash dividend summary</target>
-      </trans-unit>
       <trans-unit id="stockRealizations">
         <source>stockRealizations</source>
         <target>Stock realizations</target>
@@ -65,10 +61,6 @@
         <source>yearDividendEvents</source>
         <target>{year} Dividend events</target>
       </trans-unit>
-      <trans-unit id="period">
-        <source>period</source>
-        <target>Period</target>
-      </trans-unit>
       <trans-unit id="gross">
         <source>gross</source>
         <target>Gross {currency}</target>
@@ -81,21 +73,9 @@
         <source>netResult</source>
         <target>Net Result {currency}</target>
       </trans-unit>
-      <trans-unit id="totalDividendPayment">
-        <source>totalDividendPayment</source>
-        <target>Total payment</target>
-      </trans-unit>
       <trans-unit id="editCashDividend">
         <source>editCashDividend</source>
         <target>Edit dividend</target>
-      </trans-unit>
-      <trans-unit id="updateCashDividend">
-        <source>updateCashDividend</source>
-        <target>Save changes</target>
-      </trans-unit>
-      <trans-unit id="dividendRecordedOn">
-        <source>dividendRecordedOn</source>
-        <target>Recorded on (UTC)</target>
       </trans-unit>
       <trans-unit id="confirmDeleteCashDividendMsg">
         <source>confirmDeleteCashDividendMsg</source>
@@ -194,17 +174,9 @@
         <source>accounting</source>
         <target>Accounting</target>
       </trans-unit>
-      <trans-unit id="confirmDeleteTransactionBuyMsg">
-        <source>confirmDeleteTransactionBuyMsg</source>
-        <target>Confirm deletion of the Shares Acquisition Transaction?</target>
-      </trans-unit>
-      <trans-unit id="sell">
-        <source>sell</source>
-        <target>Sell</target>
-      </trans-unit>
-      <trans-unit id="acquisitionFee">
-        <source>acquisitionFee</source>
-        <target>{amount, plural, one {Acquisition Fee} other {Acquisitions Fees}}</target>
+      <trans-unit id="confirmAcquisitionRemoval">
+        <source>confirmAcquisitionRemoval</source>
+        <target>Delete acquisition transaction?</target>
       </trans-unit>
       <trans-unit id="market">
         <source>market</source>
@@ -254,32 +226,12 @@
         <source>delete</source>
         <target>Delete</target>
       </trans-unit>
-      <trans-unit id="stockaccounting">
-        <source>stockaccounting</source>
-        <target>stock accounting</target>
-      </trans-unit>
       <trans-unit id="transactionShortDate">
         <source>transactionShortDate</source>
         <target>{type, select,
           acquisition   {Acq. date}
           other         {Liq. date}
         }</target>
-      </trans-unit>
-      <trans-unit id="unitshareprice">
-        <source>unitshareprice</source>
-        <target>Unit share price</target>
-      </trans-unit>
-      <trans-unit id="totalsharesprice">
-        <source>totalsharesprice</source>
-        <target>Total shares price</target>
-      </trans-unit>
-      <trans-unit id="gainLoss">
-        <source>gainLoss</source>
-        <target>Gain/Loss</target>
-      </trans-unit>
-      <trans-unit id="symbol">
-        <source>symbol</source>
-        <target>Symbol</target>
       </trans-unit>
       <trans-unit id="shares">
         <source>shares</source>
@@ -307,9 +259,9 @@
           other         {Liq. Expenses {currency}}
         }</target>
       </trans-unit>
-      <trans-unit id="confirmDeleteTransactionSellMsg">
-        <source>confirmDeleteTransactionSellMsg</source>
-        <target>Confirm deletion of the Shares Liquidation Transaction associted to this accounting movement?</target>
+      <trans-unit id="confirmAccountingMovementRemoval">
+        <source>confirmAccountingMovementRemoval</source>
+        <target>Delete accounting movement and related liquidation transaction/s?</target>
       </trans-unit>
       <trans-unit id="summary">
         <source>summary</source>
@@ -331,9 +283,9 @@
         <source>acquire</source>
         <target>Acquire</target>
       </trans-unit>
-      <trans-unit id="profitLoss">
-        <source>profitLoss</source>
-        <target>Profit/Loss</target>
+      <trans-unit id="liquidate">
+        <source>liquidate</source>
+        <target>Liquidate</target>
       </trans-unit>
       <trans-unit id="import">
         <source>import</source>

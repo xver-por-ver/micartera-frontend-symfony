@@ -19,7 +19,7 @@
     {% include 'reusables/_form.html.twig' %}
 {% if summary is defined %}
     {% set currencysymbol = summary.getCurrency().symbol %}
-    {% set summaryTitle = 'profitLoss' %}
+    {% set summaryTitle = 'unrealisedresults' %}
     {% include 'stock/portfolio/summary.html.twig' %}
 
     <h2>{{ 'cashDividends'|trans }}</h2>

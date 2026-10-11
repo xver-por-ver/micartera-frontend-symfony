@@ -38,8 +38,8 @@ final class StockOperateType extends AbstractType implements DataMapperInterface
         $account = $accountQuery->findByIdentifierOrThrowException($this->accountIdentifier);
         $submitLabel = (
             isset($options['data']['type']) && 0 === $options['data']['type']
-            ? 'purchase'
-            : 'sell'
+            ? 'acquire'
+            : 'liquidate'
         );
         $builder
             ->add('datetime', DateTimeType::class, [
