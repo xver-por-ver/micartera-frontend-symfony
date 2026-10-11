@@ -269,13 +269,28 @@ h2 {
     width: fit-content;
 }
 
-.portfolioCards {
+.portfolioCards,
+.cashDividendCards {
     display: none;
 }
 
-.portfolioTable {
+.portfolioTable,
+.cashDividendTable {
     margin-top: 18px;
 }
+
+.cashDividendCard {
+    margin: 12px 0;
+    padding: 16px;
+    border: 1px solid var(--color-table-border);
+    border-radius: 12px;
+    background: var(--color-surface);
+}
+
+.cashDividendCardTop { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.cashDividendGross { padding: 4px 8px; border-radius: 7px; background: var(--color-positive-bg); color: var(--color-positive-text); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.cashDividendCard details { margin-top: 12px; border-top: 1px solid var(--color-table-border); padding-top: 10px; }
+.cashDividendCard summary { cursor: pointer; color: var(--color-link); font-weight: 600; }
 
 .portfolioCard {
     margin: 12px 0;
@@ -391,6 +406,12 @@ h2 {
         margin-top: 28px;
     }
 
+    .flash-error,
+    .flash-success {
+        margin-left: 52px;
+        width: calc(100% - 52px);
+    }
+
     h1 {
         padding-left: 48px;
     }
@@ -399,11 +420,13 @@ h2 {
         margin-top: 25px;
     }
 
-    .portfolioCards {
+    .portfolioCards,
+    .cashDividendCards {
         display: block;
     }
 
-    .portfolioTable {
+    .portfolioTable,
+    .cashDividendTable {
         display: none;
     }
 

@@ -15,7 +15,7 @@
 {% block title %}{{ title }}{% endblock %}
 
 {% block body %}
-    <h2>{{ title }}</h2>
+    <h1>{{ title }}</h1>
     {% include 'reusables/_form.html.twig' %}
 {% if summary is defined %}
     {% set currencysymbol = summary.getCurrency().symbol %}
@@ -24,7 +24,33 @@
 
     <h2>{{ 'cashDividends'|trans }}</h2>
     <a href="{{ path('cashdividend_new', {'stock': form.vars.value.code}) }}" class="actionItem">{{ 'createCashDividend'|trans }}</a>
-    <table id="cash-dividends" class="centered">
+    <div class="cashDividendCards" aria-label="{{ 'cashDividends'|trans }}">
+        {% for cashDividend in cashDividends %}
+            <article class="cashDividendCard">
+                <div class="cashDividendCardTop">
+                    <div><strong>{{ cashDividend.getDateTimeUtc()|date('Y M d H:i:s', timezone) }}</strong></div>
+                    <strong class="cashDividendGross">{{ include('reusables/format_number/decimal.html.twig', {number: cashDividend.getTotalDividendPayment().getValue()}) }}</strong>
+                </div>
+                <details>
+                    <summary>{{ 'detail'|trans }}</summary>
+                    <dl class="portfolioDetails">
+                        <div><dt>{{ 'shares'|trans }}</dt><dd>{{ include('reusables/format_number/transactionAmount.html.twig', {number: cashDividend.getAmount().getValue()}) }}</dd></div>
+                        <div><dt>{{ 'perShare'|trans({'currency': currencysymbol}) }}</dt><dd>{{ include('reusables/format_number/decimal.html.twig', {number: cashDividend.getDividendPerShare().getValue()}) }}</dd></div>
+                        <div><dt>{{ 'gross'|trans({'currency': currencysymbol}) }}</dt><dd>{{ include('reusables/format_number/decimal.html.twig', {number: cashDividend.getTotalDividendPayment().getValue()}) }}</dd></div>
+                        <div><dt>{{ 'expenses'|trans({'currency': currencysymbol}) }}</dt><dd>{{ include('reusables/format_number/decimal.html.twig', {number: cashDividend.getExpenses().getValue()}) }}</dd></div>
+                        <div><dt>{{ 'net'|trans({'currency': currencysymbol}) }}</dt><dd>{{ include('reusables/format_number/decimal.html.twig', {number: cashDividend.getNetDividendPayment().getValue()}) }}</dd></div>
+                    </dl>
+                    <div class="portfolioCardActions">
+                        <a href="{{ path('cashdividend_edit', {'id': cashDividend.getId()}) }}" class="actionItem">{{ 'editCashDividend'|trans }}</a>
+                        {{ include('stock/dividend/_delete_form.html.twig', {cashDividend: cashDividend, buttonIdPrefix: 'mobile_'}) }}
+                    </div>
+                </details>
+            </article>
+        {% else %}
+            <p>{{ 'noRecordsFound'|trans }}</p>
+        {% endfor %}
+    </div>
+    <table id="cash-dividends" class="centered cashDividendTable">
         <thead>
             <tr>
                 <th scope="col">{{ 'dateWithTZ'|trans({'timezone': timezone}) }}</th>
