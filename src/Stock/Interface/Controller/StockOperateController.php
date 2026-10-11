@@ -14,6 +14,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 use Xver\PhpAppCoreBundle\Exception\Domain\DomainExceptionTranslator;
 use Xver\PhpAppCoreBundle\Exception\Domain\DomainViolationException;
 use Xver\MiCartera\Domain\Account\Domain\AccountPersistenceInterface;
+use Xver\MiCartera\Domain\Number\Domain\Number;
 use Xver\MiCartera\Domain\Stock\Application\Command\Transaction\AcquisitionCreateCommand;
 use Xver\MiCartera\Domain\Stock\Application\Command\Transaction\AcquisitionDeleteCommand;
 use Xver\MiCartera\Domain\Stock\Application\Command\Transaction\LiquidationCreateCommand;
@@ -72,9 +73,9 @@ final class StockOperateController extends AbstractController
                 $command->invoke(
                     (string) $request->attributes->get('stock'),
                     $dateTime,
-                    $numericStringData->from($form, 'amount'),
-                    $numericStringData->from($form, 'price'),
-                    $numericStringData->from($form, 'expenses'),
+                    new Number($numericStringData->from($form, 'amount')),
+                    new Number($numericStringData->from($form, 'price')),
+                    new Number($numericStringData->from($form, 'expenses')),
                     $userIdentifier
                 );
                 $this->addFlash('success', $translator->trans('actionCompletedSuccessfully'));
