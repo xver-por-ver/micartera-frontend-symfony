@@ -13,6 +13,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 use Xver\PhpAppCoreBundle\Exception\Domain\DomainExceptionTranslator;
 use Xver\PhpAppCoreBundle\Exception\Domain\DomainViolationException;
 use Xver\MiCartera\Domain\Account\Application\Query\AccountQuery;
+use Xver\MiCartera\Domain\Number\Domain\Number;
 use Xver\MiCartera\Domain\Account\Domain\AccountPersistenceInterface;
 use Xver\MiCartera\Domain\Exchange\Domain\Exchange;
 use Xver\MiCartera\Domain\Exchange\Domain\ExchangePersistenceInterface;
@@ -79,7 +80,7 @@ final class StockController extends AbstractController
                 $command->invoke(
                     (string) $form->get('code')->getData(),
                     (string) $form->get('name')->getData(),
-                    $numericStringData->from($form, 'price'),
+                    new Number($numericStringData->from($form, 'price')),
                     $userIdentifier,
                     $exchange->getCode()
                 );
@@ -122,7 +123,7 @@ final class StockController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             try {
                 $command = new StockUpdateCommand($stockPersistence);
-                $command->invoke((string) $formData['code'], (string) $form->get('name')->getData(), $numericStringData->from($form, 'price'));
+                $command->invoke((string) $formData['code'], (string) $form->get('name')->getData(), new Number($numericStringData->from($form, 'price')));
                 $this->addFlash('success', $translator->trans('actionCompletedSuccessfully'));
 
                 return

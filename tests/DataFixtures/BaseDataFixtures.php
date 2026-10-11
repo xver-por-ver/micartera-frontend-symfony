@@ -10,6 +10,7 @@ use Doctrine\Persistence\ObjectManager;
 use Xver\MiCartera\Domain\Account\Domain\Account;
 use Xver\MiCartera\Domain\Account\Infrastructure\Doctrine\AccountPersistence;
 use Xver\MiCartera\Domain\Currency\Domain\Currency;
+use Xver\MiCartera\Domain\Number\Domain\Number;
 use Xver\MiCartera\Domain\Currency\Infrastructure\Doctrine\CurrencyPersistence;
 use Xver\MiCartera\Domain\Exchange\Domain\Exchange;
 use Xver\MiCartera\Domain\Exchange\Infrastructure\Doctrine\ExchangePersistence;
@@ -51,14 +52,14 @@ class BaseDataFixtures extends Fixture
         );
         $exchangePersistence = new ExchangePersistence($this->registry);
         $exchange = new Exchange($exchangePersistence, 'MCE', 'Mercado Continuo Español');
-        $price = new StockPriceVO('2.5620', $currencyEuro);
+        $price = new StockPriceVO(new Number('2.5620'), $currencyEuro);
         $stockPersistence = new StockPersistence($this->registry);
         $stock = new Stock($stockPersistence, 'CABK', 'Caixabank', $price, $exchange);
-        $price2 = new StockPriceVO('3.5620', $currencyEuro);
+        $price2 = new StockPriceVO(new Number('3.5620'), $currencyEuro);
         new Stock($stockPersistence, 'SAN', 'Santander', $price2, $exchange);
-        $price3 = new StockPriceVO('5.9620', $currencyEuro);
+        $price3 = new StockPriceVO(new Number('5.9620'), $currencyEuro);
         new Stock($stockPersistence, 'ROVI', 'Laboratorios Rovi', $price3, $exchange);
-        $expenses = new TransactionExpenseVO('10.23', $currencyEuro);
+        $expenses = new TransactionExpenseVO(new Number('10.23'), $currencyEuro);
         $acquisitionPersistence = new AcquisitionPersistence($this->registry);
         $liquidationPersistence = new LiquidationPersistence($this->registry);
         $movementPersistence = new MovementPersistence($this->registry);
@@ -69,7 +70,7 @@ class BaseDataFixtures extends Fixture
             $stock,
             $price,
             new \DateTime('last week', new \DateTimeZone('UTC')),
-            new TransactionAmountVO('200'),
+            new TransactionAmountVO(new Number('200')),
             $expenses,
             $account
         );

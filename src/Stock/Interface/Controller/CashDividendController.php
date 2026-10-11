@@ -16,6 +16,7 @@ use Xver\MiCartera\Domain\Stock\Application\Command\Dividend\CashDividendUpdateC
 use Xver\MiCartera\Domain\Stock\Domain\Dividend\CashDividendAmountException;
 use Xver\MiCartera\Domain\Stock\Domain\Dividend\CashDividendPersistenceInterface;
 use Xver\MiCartera\Domain\Account\Domain\AccountPersistenceInterface;
+use Xver\MiCartera\Domain\Number\Domain\Number;
 use Xver\MiCartera\Domain\Stock\Domain\StockPersistenceInterface;
 use Xver\MiCartera\Domain\Stock\Domain\Transaction\AcquisitionPersistenceInterface;
 use Xver\MiCartera\Domain\Stock\Domain\Transaction\LiquidationPersistenceInterface;
@@ -60,9 +61,9 @@ final class CashDividendController extends AbstractController
                 )->invoke(
                     $stock,
                     $dateTime,
-                    $numericStringData->from($form, 'dividendPerShare'),
+                    new Number($numericStringData->from($form, 'dividendPerShare')),
                     $identifier,
-                    $numericStringData->from($form, 'expenses')
+                    new Number($numericStringData->from($form, 'expenses'))
                 );
                 $this->addFlash('success', $translator->trans('actionCompletedSuccessfully'));
 
@@ -181,8 +182,8 @@ final class CashDividendController extends AbstractController
             try {
                 new CashDividendUpdateCommand($cashDividendPersistence)->invoke(
                     $id,
-                    $numericStringData->from($form, 'dividendPerShare'),
-                    $numericStringData->from($form, 'expenses')
+                    new Number($numericStringData->from($form, 'dividendPerShare')),
+                    new Number($numericStringData->from($form, 'expenses'))
                 );
                 $this->addFlash('success', $translator->trans('actionCompletedSuccessfully'));
 
