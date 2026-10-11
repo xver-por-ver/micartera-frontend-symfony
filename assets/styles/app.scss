@@ -302,12 +302,18 @@ h2 {
     font-size: .9rem;
 }
 
+.portfolioReturnBlock { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+
 .portfolioReturn {
     padding: 4px 8px;
     border-radius: 7px;
     white-space: nowrap;
     font-variant-numeric: tabular-nums;
 }
+
+.portfolioReturnPercent { padding: 1px 7px; border-radius: 6px; font-size: .82rem; font-variant-numeric: tabular-nums; }
+.portfolioDetailGroup { margin-top: 14px; }
+.portfolioDetailGroup h4 { margin: 0; padding: 10px 0 5px; border-bottom: 1px solid var(--color-table-border); font-size: .94rem; font-weight: 650; }
 
 .portfolioCardStats {
     display: grid;
