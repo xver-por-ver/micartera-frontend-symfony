@@ -53,10 +53,10 @@ final class CashDividendType extends AbstractType
         $submitLabel = (string) $options['submit_label'];
         $builder
             ->add('dividendPerShare', NumberType::class, [
-                'scale' => 2,
+                'scale' => 10,
                 'rounding_mode' => \NumberFormatter::ROUND_HALFUP,
                 'html5' => true,
-                'attr' => ['step' => 0.01],
+                'attr' => ['step' => '1e-10'],
                 'label' => new TranslatableMessage('dividendPerShareWithCurrencySymbol', ['symbol' => $account->getCurrency()->getSymbol()]),
             ])
             ->add('expenses', NumberType::class, [

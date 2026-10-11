@@ -167,6 +167,8 @@ class CashDividendControllerTest extends ApplicationTestCase
         $form = static::getContainer()->get('form.factory')->create(CashDividendType::class);
 
         self::assertSame('cash_dividend', $form->getName());
+        self::assertSame(10, $form->get('dividendPerShare')->getConfig()->getOption('scale'));
+        self::assertSame('1e-10', $form->get('dividendPerShare')->getConfig()->getOption('attr')['step']);
     }
 
     public function testRejectsDividendOwnedByAnotherAccount(): void
