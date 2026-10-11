@@ -44,8 +44,8 @@ final class StockOperateController extends AbstractController
     ): Response {
         $formData = [
             'type' => match ((string) $request->attributes->get('type')) {
-                'purchase' => 0,
-                'sell' => 1
+                'acquire' => 0,
+                'liquidate' => 1
             },
             'stock' => $request->attributes->get('stock'),
         ];
@@ -104,8 +104,8 @@ final class StockOperateController extends AbstractController
         MovementPersistenceInterface $movementPersistence
     ): Response {
         $type = match ((string) $request->attributes->get('type')) {
-            'purchase' => 0,
-            'sell' => 1
+            'acquire' => 0,
+            'liquidate' => 1
         };
 
         /** @psalm-var string */
