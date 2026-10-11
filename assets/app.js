@@ -5,7 +5,7 @@
  * (and its CSS file) in your base layout (base.html.twig).
  */
 
-const storedTheme = localStorage.getItem('theme') || 'dark';
+let storedTheme = localStorage.getItem('theme') || 'dark';
 document.documentElement.dataset.theme = storedTheme;
 
 const themeSelector = document.querySelector('#themeSelector');
@@ -22,25 +22,42 @@ const navMenuOpen = document.querySelector(".navMenuOpen");
 const navMenuClose = document.querySelector(".navMenuClose");
 const navMenu = document.querySelector(".navMenu");
 const navMenuBg = document.querySelector(".navMenuBg");
-var navMenuIsOpen = false;
-function navMenuShow(event) {
-    navMenuOpen.classList.toggle("hide");
-    navMenuClose.classList.toggle("hide");
-    navMenu.classList.toggle("hide");
-    navMenuBg.classList.toggle("hide");
-    navMenuIsOpen = !navMenuIsOpen;
+let navMenuIsOpen = false;
+let navMenuCloseTimer;
+function setNavMenuOpen(isOpen) {
+    navMenuIsOpen = isOpen;
+    navMenuOpen?.classList.toggle("hide", isOpen);
+    navMenuClose?.classList.toggle("hide", !isOpen);
+    navMenu?.classList.toggle("hide", !isOpen);
+    navMenuBg?.classList.toggle("hide", !isOpen);
+    navMenuOpen?.setAttribute("aria-expanded", String(isOpen));
+}
+function scheduleNavMenuClose() {
+    window.clearTimeout(navMenuCloseTimer);
+    navMenuCloseTimer = window.setTimeout(() => setNavMenuOpen(false), 180);
 }
 if (navMenuOpen != null) {
-    navMenuOpen.addEventListener("click", (event) => { navMenuShow(event); });
-    navMenuClose.addEventListener("click", (event) => { navMenuShow(event); });
-    navMenuBg.addEventListener("mouseover", (event) => { navMenuShow(event); });
-}
-const beforeUnloadHandler = (event) => {
-    if (navMenuIsOpen) {
-        navMenuShow(event);
+    const hoverCapable = window.matchMedia("(hover: hover) and (pointer: fine)");
+    navMenuOpen.addEventListener("click", () => setNavMenuOpen(!navMenuIsOpen));
+    navMenuClose?.addEventListener("click", () => setNavMenuOpen(false));
+    navMenuBg?.addEventListener("click", () => setNavMenuOpen(false));
+    if (hoverCapable.matches) {
+        navMenuOpen.addEventListener("pointerenter", () => {
+            window.clearTimeout(navMenuCloseTimer);
+            setNavMenuOpen(true);
+        });
+        [navMenuOpen, navMenuClose, navMenu].forEach((element) => {
+            element?.addEventListener("pointerleave", scheduleNavMenuClose);
+            element?.addEventListener("pointerenter", () => window.clearTimeout(navMenuCloseTimer));
+        });
     }
-};
-window.addEventListener("beforeunload", beforeUnloadHandler);
+    document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape" && navMenuIsOpen) setNavMenuOpen(false);
+    });
+}
+window.addEventListener("beforeunload", () => {
+    if (navMenuIsOpen) setNavMenuOpen(false);
+});
 
 // any CSS you import will output into a single css file (app.css in this case)
 import './styles/app.scss';

@@ -2,5 +2,5 @@
     <input type="hidden" name="_method" value="DELETE" />
     <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ accountingMovement.getLiquidation().getId()) }}" />
     <input type="hidden" name="id" value="{{ accountingMovement.getLiquidation().getId() }}" />
-    <button id="cmdDelete_{{ loop.index0 }}" name="cmdDelete_{{ loop.index0 }}">{{ 'delete'|trans }}</button>
+    <button id="cmdDelete_{{ buttonIdPrefix|default('') }}{{ loop.index0 }}" name="cmdDelete_{{ buttonIdPrefix|default('') }}{{ loop.index0 }}">{{ 'delete'|trans }}</button>
 </form>

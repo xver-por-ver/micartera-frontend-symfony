@@ -2,5 +2,5 @@
     <input type="hidden" name="_method" value="DELETE" />
     <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ cashDividend.getId()) }}" />
     <input type="hidden" name="returnTo" value="{{ app.request.requestUri }}" />
-    <button id="cmdDelete_{{ cashDividend.getId() }}" name="cmdDelete_{{ cashDividend.getId() }}">{{ 'delete'|trans }}</button>
+    <button id="cmdDelete_{{ buttonIdPrefix|default('') }}{{ cashDividend.getId() }}" name="cmdDelete_{{ buttonIdPrefix|default('') }}{{ cashDividend.getId() }}">{{ 'delete'|trans }}</button>
 </form>

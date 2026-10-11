@@ -46,7 +46,16 @@
     {% endif %}
 
     <h2>{{ 'summary' | trans }}</h2>
-    <table id="stock-accounting-summary" class="centered">
+    <form id="accounting-year-form" method="get" action="{{ path('stockaccounting_index') }}" class="accountingYearForm">
+        <input type="hidden" name="view" value="{{ activeEventTab }}" />
+        <label for="accounting-year">{{ 'year'|trans }}</label>
+        <select id="accounting-year" name="year" onchange="this.form.submit()">
+            {% for year in accounting.getYearFirstOperation()..accounting.getCurrentYear() %}
+                <option value="{{ year }}"{% if accounting.getDisplayedYear() == year %} selected="selected"{% endif %}>{{ year }}</option>
+            {% endfor %}
+        </select>
+    </form>
+    <table id="stock-accounting-summary" class="centered accountingSummaryTable">
         <thead>
             <tr>
                 <td class="noBg">&nbsp;</td>
@@ -88,17 +97,7 @@
                 <td class="number {{ allTimeCombinedStyle }}">{{ allTimeCombinedSign }}{{ include('reusables/format_number/decimal.html.twig', {number: allTimeCombinedNetResult}) }}</td>
             </tr>
             <tr>
-                <td>
-                    <form id="accounting-year-form" method="get" action="{{ path('stockaccounting_index') }}">
-                        <input type="hidden" name="view" value="{{ activeEventTab }}" />
-                        <label for="accounting-year">{{ 'year'|trans }}</label>
-                        <select id="accounting-year" name="year" onchange="this.form.submit()">
-                            {% for year in accounting.getYearFirstOperation()..accounting.getCurrentYear() %}
-                                <option value="{{ year }}"{% if accounting.getDisplayedYear() == year %} selected="selected"{% endif %}>{{ year }}</option>
-                            {% endfor %}
-                        </select>
-                    </form>
-                </td>
+                <td>{{ 'year'|trans }} {{ accounting.getDisplayedYear() }}</td>
                 <td class="number">{{ include('reusables/format_number/decimal.html.twig', {number: accounting.getSummary().getDisplayedYearAcquisitionsPrice().getValue()}) }}</td>
                 <td class="number">{{ include('reusables/format_number/decimal.html.twig', {number: accounting.getSummary().getDisplayedYearLiquidationsPrice().getValue()}) }}</td>
                 <td class="number">{{ include('reusables/format_number/decimal.html.twig', {number: accounting.getSummary().getDisplayedYearAcquisitionsExpenses().getValue()}) }}</td>
@@ -118,6 +117,46 @@
         </tbody>
     </table>
 
+    <div class="accountingSummaryCards">
+        <article class="accountingSummaryCard">
+            <h3>{{ 'allTime'|trans }}</h3>
+            <h4>{{ 'stockRealizations'|trans }}</h4>
+            <div class="accountingMetricGrid">
+                <div><span>{{ 'transactionShortGross'|trans({'type': 'acquisition', 'currency': currencysymbol}) }}</span><strong>{{ include('reusables/format_number/decimal.html.twig', {number: accounting.getSummary().getAllTimeAcquisitionsPrice().getValue()}) }}</strong></div>
+                <div><span>{{ 'transactionShortGross'|trans({'type': 'liquidation', 'currency': currencysymbol}) }}</span><strong>{{ include('reusables/format_number/decimal.html.twig', {number: accounting.getSummary().getAllTimeLiquidationsPrice().getValue()}) }}</strong></div>
+                <div><span>{{ 'transactionShortExpenses'|trans({'type': 'acquisition', 'currency': currencysymbol}) }}</span><strong>{{ include('reusables/format_number/decimal.html.twig', {number: accounting.getSummary().getAllTimeAcquisitionsExpenses().getValue()}) }}</strong></div>
+                <div><span>{{ 'transactionShortExpenses'|trans({'type': 'liquidation', 'currency': currencysymbol}) }}</span><strong>{{ include('reusables/format_number/decimal.html.twig', {number: accounting.getSummary().getAllTimeLiquidationsExpenses().getValue()}) }}</strong></div>
+                <div><span>{{ 'net'|trans({'currency': currencysymbol}) }}</span><strong class="{{ totalValueStyle }}">{{ totalValueSign }}{{ include('reusables/format_number/decimal.html.twig', {number: totalProfitPrice}) }}</strong></div>
+                <div><span>{{ 'net'|trans({'currency': '%'}) }}</span><strong class="{{ totalPercentStyle }}">{{ include('reusables/format_number/decimal.html.twig', {number: accounting.getSummary().getAllTimeProfitPercentage().getValue()}) }}</strong></div>
+            </div>
+            <h4>{{ 'cashDividends'|trans }}</h4>
+            <div class="accountingMetricGrid">
+                <div><span>{{ 'gross'|trans({'currency': currencysymbol}) }}</span><strong>{{ include('reusables/format_number/decimal.html.twig', {number: accounting.getCashDividendSummary().getAllTimeGross().getValue()}) }}</strong></div>
+                <div><span>{{ 'expenses'|trans({'currency': currencysymbol}) }}</span><strong>{{ include('reusables/format_number/decimal.html.twig', {number: accounting.getCashDividendSummary().getAllTimeExpenses().getValue()}) }}</strong></div>
+                <div><span>{{ 'net'|trans({'currency': currencysymbol}) }}</span><strong>{{ include('reusables/format_number/decimal.html.twig', {number: accounting.getCashDividendSummary().getAllTimeNet().getValue()}) }}</strong></div>
+            </div>
+            <div class="accountingCombinedResult"><span>{{ 'netResult'|trans({'currency': currencysymbol}) }}</span><strong class="{{ allTimeCombinedStyle }}">{{ allTimeCombinedSign }}{{ include('reusables/format_number/decimal.html.twig', {number: allTimeCombinedNetResult}) }}</strong></div>
+        </article>
+        <article class="accountingSummaryCard">
+            <h3>{{ 'year'|trans }} {{ accounting.getDisplayedYear() }}</h3>
+            <h4>{{ 'stockRealizations'|trans }}</h4>
+            <div class="accountingMetricGrid">
+                <div><span>{{ 'transactionShortGross'|trans({'type': 'acquisition', 'currency': currencysymbol}) }}</span><strong>{{ include('reusables/format_number/decimal.html.twig', {number: accounting.getSummary().getDisplayedYearAcquisitionsPrice().getValue()}) }}</strong></div>
+                <div><span>{{ 'transactionShortGross'|trans({'type': 'liquidation', 'currency': currencysymbol}) }}</span><strong>{{ include('reusables/format_number/decimal.html.twig', {number: accounting.getSummary().getDisplayedYearLiquidationsPrice().getValue()}) }}</strong></div>
+                <div><span>{{ 'transactionShortExpenses'|trans({'type': 'acquisition', 'currency': currencysymbol}) }}</span><strong>{{ include('reusables/format_number/decimal.html.twig', {number: accounting.getSummary().getDisplayedYearAcquisitionsExpenses().getValue()}) }}</strong></div>
+                <div><span>{{ 'transactionShortExpenses'|trans({'type': 'liquidation', 'currency': currencysymbol}) }}</span><strong>{{ include('reusables/format_number/decimal.html.twig', {number: accounting.getSummary().getDisplayedYearLiquidationsExpenses().getValue()}) }}</strong></div>
+                <div><span>{{ 'net'|trans({'currency': currencysymbol}) }}</span><strong class="{{ yearValueStyle }}">{{ yearValueSign }}{{ include('reusables/format_number/decimal.html.twig', {number: yearProfitPrice}) }}</strong></div>
+                <div><span>{{ 'net'|trans({'currency': '%'}) }}</span><strong class="{{ yearPercentStyle }}">{{ include('reusables/format_number/decimal.html.twig', {number: accounting.getSummary().getDisplayedYearProfitPercentage().getValue()}) }}</strong></div>
+            </div>
+            <h4>{{ 'cashDividends'|trans }}</h4>
+            <div class="accountingMetricGrid">
+                <div><span>{{ 'gross'|trans({'currency': currencysymbol}) }}</span><strong>{{ include('reusables/format_number/decimal.html.twig', {number: accounting.getCashDividendSummary().getDisplayedYearGross().getValue()}) }}</strong></div>
+                <div><span>{{ 'expenses'|trans({'currency': currencysymbol}) }}</span><strong>{{ include('reusables/format_number/decimal.html.twig', {number: accounting.getCashDividendSummary().getDisplayedYearExpenses().getValue()}) }}</strong></div>
+                <div><span>{{ 'net'|trans({'currency': currencysymbol}) }}</span><strong>{{ include('reusables/format_number/decimal.html.twig', {number: accounting.getCashDividendSummary().getDisplayedYearNet().getValue()}) }}</strong></div>
+            </div>
+            <div class="accountingCombinedResult"><span>{{ 'netResult'|trans({'currency': currencysymbol}) }}</span><strong class="{{ displayedYearCombinedStyle }}">{{ displayedYearCombinedSign }}{{ include('reusables/format_number/decimal.html.twig', {number: displayedYearCombinedNetResult}) }}</strong></div>
+        </article>
+    </div>
 
     <div id="accounting-event-tabs" role="tablist" aria-label="{{ 'accountingEventLists'|trans }}">
         <button type="button" id="stocks-tab" role="tab" aria-selected="{{ activeEventTab == 'stocks' ? 'true' : 'false' }}" aria-controls="stocks-panel"{% if activeEventTab != 'stocks' %} tabindex="-1"{% endif %}>{{ 'stocksTab'|trans }}</button>
@@ -136,7 +175,49 @@
     {% else %}
     <span class="disabledItem">{%trans%}nextPage{%endtrans%}</span>
     {% endif %}
-    <table>
+    <div class="accountingStockCards">
+        {% for accountingMovement in accounting.getCollection() %}
+            {% set movementProfit = accounting.getMovementProfitPrice(loop.index0).getValue() %}
+            {% set movementStyle = movementProfit >= 0 ? 'positiveValue' : 'negativeValue' %}
+            <article class="accountingEventCard">
+                <div class="accountingEventTop">
+                    <div>
+                        <strong>{{ accountingMovement.getLiquidation().datetimeutc|date('M d H:i:s', timezone) }}</strong>
+                        <div class="portfolioCompany"><a href="{{ path('stock_update', {'id': accountingMovement.getLiquidation().getStock().getId()}) }}" class="portfolioStock">{{ accountingMovement.getLiquidation().getStock().getId() }} - {{ accountingMovement.getLiquidation().getStock().getExchange.getCode() }}</a> {{ accountingMovement.getLiquidation().getStock().getName() }}</div>
+                    </div>
+                    <strong class="accountingEventResult {{ movementStyle }}">{{ movementProfit >= 0 ? '+' : '' }}{{ include('reusables/format_number/decimal.html.twig', {number: movementProfit}) }}</strong>
+                </div>
+                <div class="accountingEventPercent {{ movementStyle }}">{{ include('reusables/format_number/decimal.html.twig', {number: accounting.getMovementProfitPercentage(loop.index0).getValue()}) }}</div>
+                <details>
+                    <summary>{{ 'detail'|trans }}</summary>
+                    <section class="portfolioDetailGroup">
+                        <h4>{{ 'acquisition'|trans({'amount': 1}) }}</h4>
+                        <dl class="portfolioDetails">
+                            <div><dt>{{ 'transactionShortDate'|trans({'type': 'acquisition'}) }}</dt><dd>{{ accountingMovement.getAcquisition().datetimeutc|date('Y M d H:i:s', timezone) }}</dd></div>
+                            <div><dt>{{ 'shares'|trans }}</dt><dd>{{ include('reusables/format_number/transactionAmount.html.twig', {number: accountingMovement.getAmount().getValue()}) }}</dd></div>
+                            <div><dt>{{ 'perShare'|trans }}</dt><dd>{{ include('reusables/format_number/stock.html.twig', {number: accountingMovement.getAcquisition().getPrice().getValue()}) }}</dd></div>
+                            <div><dt>{{ 'gross'|trans({'currency': currencysymbol}) }}</dt><dd>{{ include('reusables/format_number/stock.html.twig', {number: accounting.getMovementAcquisitionPrice(loop.index0).getValue()}) }}</dd></div>
+                            <div><dt>{{ 'expenses'|trans({'currency': currencysymbol}) }}</dt><dd>{{ include('reusables/format_number/decimal.html.twig', {number: accounting.getMovementAcquisitionExpense(loop.index0).getValue()}) }}</dd></div>
+                        </dl>
+                    </section>
+                    <section class="portfolioDetailGroup">
+                        <h4>{{ 'liquidation'|trans({'amount': 1}) }}</h4>
+                        <dl class="portfolioDetails">
+                            <div><dt>{{ 'transactionShortDate'|trans({'type': 'liquidation'}) }}</dt><dd>{{ accountingMovement.getLiquidation().datetimeutc|date('Y M d H:i:s', timezone) }}</dd></div>
+                            <div><dt>{{ 'realizedHoldingDays'|trans }}</dt><dd>{{ date(accountingMovement.getLiquidation().datetimeutc).diff(date(accountingMovement.getAcquisition().datetimeutc)).days }}</dd></div>
+                            <div><dt>{{ 'perShare'|trans }}</dt><dd>{{ include('reusables/format_number/stock.html.twig', {number: accountingMovement.getLiquidation().getPrice().getValue()}) }}</dd></div>
+                            <div><dt>{{ 'gross'|trans({'currency': currencysymbol}) }}</dt><dd>{{ include('reusables/format_number/stock.html.twig', {number: accounting.getMovementLiquidationPrice(loop.index0).getValue()}) }}</dd></div>
+                            <div><dt>{{ 'expenses'|trans({'currency': currencysymbol}) }}</dt><dd>{{ include('reusables/format_number/decimal.html.twig', {number: accounting.getMovementLiquidationExpense(loop.index0).getValue()}) }}</dd></div>
+                        </dl>
+                    </section>
+                    <div class="portfolioCardActions">{{ include('stock/accounting/_delete_form.html.twig', {buttonIdPrefix: 'mobile_'}) }}</div>
+                </details>
+            </article>
+        {% else %}
+            <p>{{ 'noRecordsFound'|trans }}</p>
+        {% endfor %}
+    </div>
+    <table class="accountingStockTable">
         <thead>
             <tr>
                 <td colspan="5" class="noBg">&nbsp;</td>
@@ -222,7 +303,36 @@
 
     <section id="dividends-panel" role="tabpanel" aria-labelledby="dividends-tab"{% if activeEventTab != 'dividends' %} hidden{% endif %}>
         <h2>{{ 'yearDividendEvents'|trans({'year': accounting.getDisplayedYear()}) }}</h2>
-        <table id="dividend-events">
+        <div class="accountingDividendCards">
+            {% for cashDividend in accounting.getCashDividendSummary().getDisplayedYearDividends() %}
+                <article class="accountingEventCard">
+                    <div class="accountingEventTop">
+                        <div>
+                            <strong>{{ cashDividend.getDateTimeUtc()|date('Y M d H:i:s', timezone) }}</strong>
+                            <div class="portfolioCompany"><a href="{{ path('stock_update', {'id': cashDividend.getStock().getId()}) }}" class="portfolioStock">{{ cashDividend.getStock().getId() }} - {{ cashDividend.getStock().getExchange().getCode() }}</a> {{ cashDividend.getStock().getName() }}</div>
+                        </div>
+                        <strong class="accountingEventResult positiveValue">{{ include('reusables/format_number/decimal.html.twig', {number: cashDividend.getNetDividendPayment().getValue()}) }}</strong>
+                    </div>
+                    <details>
+                        <summary>{{ 'detail'|trans }}</summary>
+                        <dl class="portfolioDetails">
+                            <div><dt>{{ 'shares'|trans }}</dt><dd>{{ include('reusables/format_number/transactionAmount.html.twig', {number: cashDividend.getAmount().getValue()}) }}</dd></div>
+                            <div><dt>{{ 'perShare'|trans({'currency': currencysymbol}) }}</dt><dd>{{ include('reusables/format_number/dividendPerShare.html.twig', {number: cashDividend.getDividendPerShare().getValue()}) }}</dd></div>
+                            <div><dt>{{ 'gross'|trans({'currency': currencysymbol}) }}</dt><dd>{{ include('reusables/format_number/decimal.html.twig', {number: cashDividend.getTotalDividendPayment().getValue()}) }}</dd></div>
+                            <div><dt>{{ 'expenses'|trans({'currency': currencysymbol}) }}</dt><dd>{{ include('reusables/format_number/decimal.html.twig', {number: cashDividend.getExpenses().getValue()}) }}</dd></div>
+                            <div><dt>{{ 'net'|trans({'currency': currencysymbol}) }}</dt><dd>{{ include('reusables/format_number/decimal.html.twig', {number: cashDividend.getNetDividendPayment().getValue()}) }}</dd></div>
+                        </dl>
+                        <div class="portfolioCardActions">
+                            <a href="{{ path('cashdividend_edit', {'id': cashDividend.getId()}) }}" class="actionItem">{{ 'editCashDividend'|trans }}</a>
+                            {{ include('stock/dividend/_delete_form.html.twig', {cashDividend: cashDividend, buttonIdPrefix: 'mobile_'}) }}
+                        </div>
+                    </details>
+                </article>
+            {% else %}
+                <p>{{ 'noRecordsFound'|trans }}</p>
+            {% endfor %}
+        </div>
+        <table id="dividend-events" class="accountingDividendTable">
             <thead>
                 <tr>
                     <th scope="col">{{ 'dateWithTZ'|trans({'timezone': timezone.getName()}) }}</th>

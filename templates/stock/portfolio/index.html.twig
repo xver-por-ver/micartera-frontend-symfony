@@ -9,7 +9,7 @@
 {% block title %}{{ 'stockportfolio'|trans|capitalize }}{% endblock %}
 
 {% block body %}
-    <h1>{{ 'stockportfolio'|trans|capitalize }}
+    <h1>{{ 'stockportfolio'|trans|capitalize }}</h1>
 
     {% set currencysymbol = portfolio.getAccount().currency.symbol %}
     {% set timezone = portfolio.getAccount().getTimeZone().getName() %}
@@ -27,7 +27,53 @@
     {% else %}
     <span class="disabledItem">{%trans%}nextPage{%endtrans%}</span>
     {% endif %}
-    <table>
+    <div class="portfolioCards" aria-label="{{ 'detail'|trans }}">
+        {% for portfolioPosition in portfolio.getCollection() %}
+            {% set positionProfit = portfolio.getPositionProfitPrice(loop.index0).getValue() %}
+            {% set positionStyle = positionProfit >= 0 ? 'positiveValue' : 'negativeValue' %}
+            <article class="portfolioCard">
+                <div class="portfolioCardTop">
+                    <div>
+                        <a href="{{ path('stock_update', {'id': portfolioPosition.stock.getId()}) }}" class="portfolioStock">{{ portfolioPosition.stock.getId() }} - {{ portfolioPosition.stock.getExchange.getCode() }}</a>
+                        <div class="portfolioCompany">{{ portfolioPosition.stock.getName() }}</div>
+                    </div>
+                    <div class="portfolioReturnBlock">
+                        <strong class="portfolioReturn {{ positionStyle }}">{{ positionProfit >= 0 ? '+' : '' }}{{ include('reusables/format_number/stock.html.twig', {number: positionProfit}) }} {{ currencysymbol }}</strong>
+                        <span class="portfolioReturnPercent {{ positionStyle }}">{{ include('reusables/format_number/decimal.html.twig', {number: portfolio.getPositionProfitPercentage(loop.index0).getValue()}) }} &percnt;</span>
+                    </div>
+                </div>
+                <details>
+                    <summary>{{ 'detail'|trans }}</summary>
+                    <section class="portfolioDetailGroup">
+                        <h4>{{ 'acquisition'|trans({'amount': 1}) }}</h4>
+                        <dl class="portfolioDetails">
+                            <div><dt>{{ 'transactionShortDate'|trans({'type': 'acquisition'}) }}</dt><dd>{{ portfolioPosition.datetimeutc|date('Y M d H:i:s', timezone) }}</dd></div>
+                            <div><dt>{{ 'unrealizedHoldingDays'|trans }}</dt><dd>{{ date("now", timezone).diff(date(portfolioPosition.datetimeutc)).days }}</dd></div>
+                            <div><dt>{{ 'shares'|trans }}</dt><dd>{{ include('reusables/format_number/transactionAmount.html.twig', {number: portfolioPosition.amountActionable.getValue()}) }}</dd></div>
+                            <div><dt>{{ 'perShare'|trans({'currency': ''}) }}</dt><dd>{{ include('reusables/format_number/stock.html.twig', {number: portfolioPosition.price.value}) }} {{ currencysymbol }}</dd></div>
+                            <div><dt>{{ 'gross'|trans({'currency': ''}) }}</dt><dd>{{ include('reusables/format_number/stock.html.twig', {number: portfolio.getPositionAcquisitionPrice(loop.index0).getValue()}) }} {{ currencysymbol }}</dd></div>
+                            <div><dt>{{ 'expenses'|trans({'currency': ''}) }}</dt><dd>{{ include('reusables/format_number/decimal.html.twig', {number: portfolio.getPositionAcquisitionExpenses(loop.index0).getValue()}) }} {{ currencysymbol }}</dd></div>
+                        </dl>
+                    </section>
+                    <section class="portfolioDetailGroup">
+                        <h4>{{ 'market'|trans({'currency': ''}) }}</h4>
+                        <dl class="portfolioDetails">
+                            <div><dt>{{ 'perShare'|trans({'currency': ''}) }}</dt><dd>{{ include('reusables/format_number/stock.html.twig', {number: portfolioPosition.stock.price.value}) }} {{ currencysymbol }}</dd></div>
+                            <div><dt>{{ 'gross'|trans({'currency': ''}) }}</dt><dd>{{ include('reusables/format_number/stock.html.twig', {number: portfolio.getPositionMarketPrice(loop.index0).getValue()}) }} {{ currencysymbol }}</dd></div>
+                        </dl>
+                    </section>
+                    <div class="portfolioCardActions">
+                        <a href="{{ path('stockoperate_new', {'type': 'liquidate', 'stock': portfolioPosition.stock.getId()}) }}" class="actionItem">{{ 'liquidate'|trans }}</a>
+                        <a href="{{ path('cashdividend_new', {'stock': portfolioPosition.stock.getId()}) }}" class="actionItem">{{ 'createCashDividend'|trans }}</a>
+                        {{ include('stock/portfolio/_delete_form.html.twig') }}
+                    </div>
+                </details>
+            </article>
+        {% else %}
+            <p>{{ 'noRecordsFound'|trans }}</p>
+        {% endfor %}
+    </div>
+    <table class="portfolioTable">
         <thead>
             <tr>
                 <td colspan="4" class="noBg">&nbsp;</td>
@@ -49,10 +95,10 @@
                 <th scope="col">{{ 'unrealizedHoldingDays' | trans }}</th>
                 <th scope="col">{{ 'stocks' | trans({'amount': 1}) }}</th>
                 <th scope="col">{{ 'shares' | trans }}</th>
-                <th scope="col">{{ 'perShare' | trans }}</th>
+                <th scope="col">{{ 'perShare' | trans({'currency': ''}) }}</th>
                 <th scope="col">{{ 'gross' | trans({'currency': ''}) }}</th>
                 <th scope="col">{{ 'expenses' | trans({'currency': ''}) }}</th>
-                <th scope="col">{{ 'perShare' | trans({'amount': 1}) }}</th>
+                <th scope="col">{{ 'perShare' | trans({'currency': ''}) }}</th>
                 <th scope="col">{{ 'gross' | trans({'currency': ''}) }}</th>
                 <th scope="col">{{ 'net' | trans({'currency': currencysymbol}) }}</th>
                 <th scope="col">{{ 'net' | trans({'currency': '%'}) }}</th>
