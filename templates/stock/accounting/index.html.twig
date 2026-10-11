@@ -241,7 +241,7 @@
                         <td>{{ cashDividend.getDateTimeUtc()|date('Y M d H:i:s', timezone) }}</td>
                         <td><a href="{{ path('stock_update', {'id': cashDividend.getStock().getId()}) }}" class="actionItem">{{ cashDividend.getStock().getId() }} - {{ cashDividend.getStock().getExchange().getCode() }}</a> {{ cashDividend.getStock().getName() }}</td>
                         <td class="number">{{ include('reusables/format_number/transactionAmount.html.twig', {number: cashDividend.getAmount().getValue()}) }}</td>
-                        <td class="number">{{ include('reusables/format_number/decimal.html.twig', {number: cashDividend.getDividendPerShare().getValue()}) }}</td>
+                        <td class="number">{{ include('reusables/format_number/dividendPerShare.html.twig', {number: cashDividend.getDividendPerShare().getValue()}) }}</td>
                         <td class="number">{{ include('reusables/format_number/decimal.html.twig', {number: cashDividend.getTotalDividendPayment().getValue()}) }}</td>
                         <td class="number">{{ include('reusables/format_number/decimal.html.twig', {number: cashDividend.getExpenses().getValue()}) }}</td>
                         <td class="number">{{ include('reusables/format_number/decimal.html.twig', {number: cashDividend.getNetDividendPayment().getValue()}) }}</td>
