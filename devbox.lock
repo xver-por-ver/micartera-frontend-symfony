@@ -5,51 +5,41 @@
       "last_modified": "2026-10-05T00:52:30Z",
       "resolved": "github:NixOS/nixpkgs/8c6b39505383e6d5dcb431f00cb3597b71f8045c?lastModified=1791161550&narHash=sha256-hUcT0jKmSHN5XgRW3sSEIIlqsVClkVfToluYtOd56ok%3D"
     },
-    "php85Extensions.opentelemetry@1.3.1": {
-      "last_modified": "2026-10-04T16:11:07Z",
-      "resolved": "github:NixOS/nixpkgs/9013764fcc0ea99fa16cf7aa7decf8a5c3889dd2#php85Extensions.opentelemetry",
+    "php85Extensions.opentelemetry@1.4.2": {
+      "last_modified": "2026-10-08T19:21:32Z",
+      "resolved": "github:NixOS/nixpkgs/8edc0c72e3a38faf5434e40d1f19431125fe4b30#php85Extensions.opentelemetry",
       "source": "devbox-search",
-      "version": "1.3.1",
+      "version": "1.4.2",
       "systems": {
         "aarch64-darwin": {
           "outputs": [
             {
               "name": "out",
-              "path": "/nix/store/n879135swyfmkshzg07cxgcb2fr7xa2l-php-opentelemetry-1.3.1",
+              "path": "/nix/store/7dbhd1dvs7j84in4l5griq9n54h7bc82-php-opentelemetry-1.4.2",
               "default": true
             }
           ],
-          "store_path": "/nix/store/n879135swyfmkshzg07cxgcb2fr7xa2l-php-opentelemetry-1.3.1"
+          "store_path": "/nix/store/7dbhd1dvs7j84in4l5griq9n54h7bc82-php-opentelemetry-1.4.2"
         },
         "aarch64-linux": {
           "outputs": [
             {
               "name": "out",
-              "path": "/nix/store/5kl0l2cbsi40j2i6ch6cblzhy6aqsn1j-php-opentelemetry-1.3.1",
+              "path": "/nix/store/4xqndc1xb5xk5yw80f0bji5fzz0adbcl-php-opentelemetry-1.4.2",
               "default": true
             }
           ],
-          "store_path": "/nix/store/5kl0l2cbsi40j2i6ch6cblzhy6aqsn1j-php-opentelemetry-1.3.1"
-        },
-        "x86_64-darwin": {
-          "outputs": [
-            {
-              "name": "out",
-              "path": "/nix/store/i1wywy4401kjb49n60r6wf9zi338y01m-php-opentelemetry-1.3.1",
-              "default": true
-            }
-          ],
-          "store_path": "/nix/store/i1wywy4401kjb49n60r6wf9zi338y01m-php-opentelemetry-1.3.1"
+          "store_path": "/nix/store/4xqndc1xb5xk5yw80f0bji5fzz0adbcl-php-opentelemetry-1.4.2"
         },
         "x86_64-linux": {
           "outputs": [
             {
               "name": "out",
-              "path": "/nix/store/7a19s4jvwgfhh6k381c5i98912wh65dk-php-opentelemetry-1.3.1",
+              "path": "/nix/store/n1scpgag0p7bl8clrkvjjdd6saj2ki07-php-opentelemetry-1.4.2",
               "default": true
             }
           ],
-          "store_path": "/nix/store/7a19s4jvwgfhh6k381c5i98912wh65dk-php-opentelemetry-1.3.1"
+          "store_path": "/nix/store/n1scpgag0p7bl8clrkvjjdd6saj2ki07-php-opentelemetry-1.4.2"
         }
       }
     },
