@@ -4,7 +4,7 @@
     "PHPFPM_PORT":                 "8081"
   },
   "packages": [
-    "php@8.5.9",
+    "php@8.5.11",
     "php85Extensions.xdebug@3.5.3",
     "php85Extensions.opentelemetry@1.3.1"
   ],
