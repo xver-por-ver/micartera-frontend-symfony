@@ -1,30 +1,98 @@
-name: Symfony recipes check
+name: Symfony recipes
 
 on:
   workflow_call:
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
-  check-recipes:
-    name: Check Symfony recipes
+  update-recipes:
+    name: Update Symfony recipes
     runs-on: ubuntu-latest
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
 
     steps:
-      - name: Checkout code
+      - name: Create GitHub App token
+        id: app-token
+        uses: actions/create-github-app-token@v3
+        with:
+          client-id: ${{ secrets.RECIPE_UPDATE_APP_ID }}
+          private-key: ${{ secrets.RECIPE_UPDATE_APP_PRIVATE_KEY }}
+
+      - name: Checkout current branch
         uses: actions/checkout@v7
+        with:
+          ref: ${{ github.head_ref || github.ref_name }}
+          token: ${{ steps.app-token.outputs.token }}
 
       - name: Setup devbox
         uses: jetify-com/devbox-install-action@v0.15.0
         with:
           enable-cache: true
 
-      - name: Validate composer.json and composer.lock
-        run: devbox run composer validate --strict
-
       - name: Install dependencies
         run: devbox run composer install --prefer-dist --no-progress --no-interaction
 
-      - name: Check outdated Symfony recipes
-        run: devbox run composer recipes --outdated
+      - name: Update Symfony recipes
+        run: |
+          set -euo pipefail
+
+          set +e
+          recipes_output=$(devbox run composer recipes --outdated 2>&1)
+          recipes_status=$?
+          set -e
+
+          printf '%s\n' "$recipes_output"
+
+          packages=$(printf '%s\n' "$recipes_output" | awk '/^[[:space:]]*\* / && /\(update available\)/ { print $2 }')
+          if [ -z "$packages" ]; then
+            echo "No outdated Symfony recipes."
+            exit 0
+          fi
+
+          if [ "$recipes_status" -ne 0 ]; then
+            echo "composer recipes --outdated reported outdated recipes (exit $recipes_status); continuing with updates."
+          fi
+
+          git config user.name "${{ steps.app-token.outputs.app-slug }}[bot]"
+          git config user.email "${{ secrets.RECIPE_UPDATE_APP_ID }}+${{ steps.app-token.outputs.app-slug }}[bot]@users.noreply.github.com"
+
+          initial_head=$(git rev-parse HEAD)
+          update_failed=0
+          for package in $packages; do
+            echo "Updating Symfony recipe for $package"
+            set +e
+            devbox run composer recipes:update "$package" --no-interaction --no-changelog
+            update_status=$?
+            set -e
+
+            if [ "$update_status" -ne 0 ] || [ -n "$(git diff --name-only --diff-filter=U)" ]; then
+              echo "Recipe update for $package failed or produced conflicts. Resolve it manually."
+              git status --short
+              git reset --hard HEAD
+              git clean -fd
+              update_failed=1
+              continue
+            fi
+
+            git add -A
+            if ! git diff --cached --quiet; then
+              git commit -m "Update Symfony recipe for $package"
+            fi
+          done
+
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "Recipe updates left uncommitted changes."
+            exit 1
+          fi
+
+          if [ "$(git rev-parse HEAD)" != "$initial_head" ]; then
+            devbox run composer validate --strict
+            git push origin "HEAD:${GITHUB_HEAD_REF:-$GITHUB_REF_NAME}"
+          fi
+
+          if [ "$update_failed" -ne 0 ]; then
+            echo "One or more recipe updates failed; successful recipe updates were committed and pushed."
+            exit 1
+          fi
