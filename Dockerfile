@@ -81,11 +81,9 @@ COPY --from=php-ext-build /usr/local/lib/php/extensions /usr/local/lib/php/exten
 COPY --from=php-ext-build /usr/local/etc/php/conf.d /usr/local/etc/php/conf.d
 
 # Copy application
-COPY . .
-COPY --from=vendorphp /var/www/html/vendor ./vendor
-COPY --from=buildnode /var/www/html/public/build ./public/build
-
-RUN chown -R www-data:www-data /var/www/html
+COPY --chown=www-data:www-data . .
+COPY --chown=www-data:www-data --from=vendorphp /var/www/html/vendor ./vendor
+COPY --chown=www-data:www-data --from=buildnode /var/www/html/public/build ./public/build
 
 USER www-data
 ENV APP_ENV=prod
