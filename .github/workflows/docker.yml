@@ -15,9 +15,19 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v7
 
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@e468171a9de216ec08956ac3ada2f0791b6bd435 # v3.11.1
+
       - name: Build Docker image
         run: |
           set -a
           . ./versions.env
           set +a
-          docker build --build-arg RELEASE_PHP --build-arg RELEASE_NODE --build-arg RELEASE_OPENTELEMETRY .
+          docker buildx build \
+            --build-arg RELEASE_PHP \
+            --build-arg RELEASE_NODE \
+            --build-arg RELEASE_OPENTELEMETRY \
+            --cache-from type=gha,scope=docker-build \
+            --cache-to type=gha,scope=docker-build,mode=max \
+            --load \
+            .
